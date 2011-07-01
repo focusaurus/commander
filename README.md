@@ -23,7 +23,7 @@ editing. `rlwrap` must be in your `PATH` environment varible
 * Copy sites_sample.conf to sites.conf and edit it
     * `cp sites_sample.conf sites.conf`
     * `$EDITOR sites.conf`
-* read [sites_sample.conf]() for documentation on its syntax
+* read [sites_sample.conf](./blob/master/sites_sample.conf) for documentation on its syntax
 * Fire up commander (optionally preceeded by `rlwrap` for history and line editing)
     * rlwrap python commander.py
 
@@ -43,7 +43,7 @@ right away.
 
 #Adding your own commands
 * Copy `mycommands_sample.py` to `mycommands.py` and edit it
-* Read the comments in [mycommands_sample.py]() for tips
+* Read the comments in [mycommands_sample.py](./blob/master/mycommands_sample.py) for tips
 
 ## Keyboard Maestro
 
