@@ -30,25 +30,26 @@ commands = {}
 reloaders = []
 class Reloader(object):
  
-    def __init__(self, path, reloadFunction):
+    def __init__(self, path):
         self.path = path
-        self.reloadFunction = reloadFunction
         self.mtime = os.stat(self.path).st_mtime
 
-    def reload(self, *args):
-        logger.debug("BUGBUG checking mtime of %s" % self.path)
+    def check(self, *args):
         if (not os.access(self.path, os.R_OK)) or \
                 (not os.path.isfile(self.path)):
-            return
+            return False
         newMTime = os.stat(self.path).st_mtime 
         if self.mtime < newMTime:
             self.mtime = newMTime
-            self.reloadFunction(*args)
+            return True
+        return False
 
 
 class Application(Frame):
     def createWidgets(self):
-        self.prompt = Entry(self, width=100, takefocus=True)
+        self.input = StringVar()
+        self.prompt = Entry(self, width=100, takefocus=True,
+                textvariable=self.input)
         self.prompt.bind("<Return>", self.run)
         self.prompt.pack({"anchor": "n"})
         self.prompt.focus_set()
@@ -61,16 +62,15 @@ class Application(Frame):
         self.QUIT.pack()
 
     def run(self, *args):
-        print "Running", self.prompt.get()
-        interpret(self.prompt.get())
-        self.quit()
+        print "Running", self.input.get()
+        interpret(self.input.get())
+        self.input.set("")
+        #self.quit()
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.pack()
         self.createWidgets()
-        
-
 
 
 #decorator function to store command functions in commands map
@@ -84,24 +84,18 @@ def command(function):
 def alias(commandFunc, alias):
     commands[alias] = commandFunc
 
-def siteShower(URLs):
+def siteOpener(URLs):
     "Generate a closure function to open a list of URLs in the browser"
     #Note: If you rename this function, rename it inside loadSites as well
-    def shower(*terms):
-        global SITE_CONF_MTIME
-        newMtime = os.stat(SITE_CONF_PATH).st_mtime 
-        if newMtime > SITE_CONF_MTIME:
-            SITE_CONF_MTIME = newMtime
-            loadSites()
+    def opener(*terms):
         for URL in URLs:
             if URL.count("%s") == 1:
                 helpers.search(URL, terms)
             else:
                 helpers.browser(URL)
-    return shower
+    return opener
 
-def loadCommander(command=""):
-    #Main commander.py code has been changed, reload the entire program
+def fullReload(command=""):
     #TODO make rlwrap optional
     logger.info("Reloading commander.py")
     os.execvp("rlwrap", ["rlwrap", sys.argv[0]] + \
@@ -113,14 +107,14 @@ def loadSites(*args):
     if (not os.access(SITE_CONF_PATH, os.R_OK)) or \
             (not os.path.isfile(SITE_CONF_PATH)):
         return
-    logger.info("Reloading %s" % SITE_CONF_PATH)
     #Purge any existing sites
     purged = []
     for kw, func in copy.copy(commands).iteritems():
-        if func.__name__ == "shower":
+        if func.__name__ == "opener":
             purged.append(kw)
             del commands[kw]
     logger.debug("Purged site keyword commands: %s" % purged)
+    logger.info("Reloading %s" % SITE_CONF_PATH)
     with open(SITE_CONF_PATH) as inFile:
         for line in inFile:
             if not line.strip():
@@ -134,30 +128,31 @@ def loadSites(*args):
             URLs = tokens[1:]
             if keyword.find(","):
                 for alias in keyword.split(","):
-                    commands[alias] = siteShower(URLs)
+                    commands[alias] = siteOpener(URLs)
             else:
-                commands[keyword] = siteShower(URLs)
+                commands[keyword] = siteOpener(URLs)
 
 def loadMyCommands(*args):
     logger.info("loading mycommands")
-    if "mycommands" in globals():
-        #TODO this does not purge old commands, but it probably should
-        reload(mycommands)
-    else:
-        try:
-            logger.debug("Before mycommands we have %s" % commands.keys())
-            import mycommands
-            logger.debug("After mycommands we have %s" % commands.keys())
-            logger.info("Loaded mycommands from: " + mycommands.__file__)
-            reloaders.append(Reloader(mycommands.__file__, loadMyCommands))
-        except ImportError, info:
-            logger.debug("Could not import mycommands module. %s" % info)
+    try:
+        logger.debug("Before mycommands we have %s" % commands.keys())
+        import mycommands
+        logger.debug("After mycommands we have %s" % commands.keys())
+        path = mycommands.__file__
+        logger.info("Loaded mycommands from: " + path)
+        if path.endswith("pyc"):
+            path = path[0:-1] #Watch the .py file for change, not the .pyc
+        reloaders.append(Reloader(path))
+    except ImportError, info:
+        logger.debug("Could not import mycommands module. %s" % info)
     
 def interpret(value):
     if not value:
         #Typing CTRL-D at the prompt generates empty string, which means quit
         return quit()
-    [reloader.reload(value) for reloader in reloaders]
+    for reloader in reloaders:
+        if reloader.check():
+            fullReload(value) #This will exit the process and re-execute
     value = value.strip()
     if not value:
         #Empty line, reprompt
@@ -208,8 +203,8 @@ def main():
     helpers.alias = alias
     helpers.logger = logger
     
-    reloaders.append(Reloader(sys.argv[0], loadCommander))
-    reloaders.append(Reloader(SITE_CONF_PATH, loadSites))
+    reloaders.append(Reloader(sys.argv[0]))
+    reloaders.append(Reloader(SITE_CONF_PATH))
     loadSites()
     loadMyCommands()
 
@@ -219,7 +214,7 @@ def main():
     while True:
         sys.stdout.write("> ")
         command = sys.stdin.readline()
-        #BUGBUG#helpers.run("clear")
+        helpers.run("clear")
         interpret(command)
 
 if __name__ == "__main__":

@@ -13,12 +13,14 @@ def addProtocol(URL):
 def browser(args):
     if type(args) not in (types.ListType, types.TupleType):
         args = [args]
+    #TODO this only works on OS X. Add linux support
     run(["open"] + args)
 
 def copyText(text):
     popen = subprocess.Popen("pbcopy", stdin=subprocess.PIPE).communicate(text)
 
 def maestro(scriptId):
+    """Run a Keyboard Maestro script by ID (more robust) or name"""
     return """osascript -e 'tell application "Keyboard Maestro Engine" to """ \
        """do script "%s"'\n""" % scriptId
 
