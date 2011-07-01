@@ -28,9 +28,7 @@ def run(args):
     subprocess.call(args)
 
 def search(url, terms):
-    termList = [urlencode(term) for term in terms]
-    print termList
-    browser(url % tuple(termList))
+    browser(url % urlencode(terms)) 
 
 def urlencode(terms):
     if type(terms) in types.StringTypes:

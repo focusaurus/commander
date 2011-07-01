@@ -131,6 +131,12 @@ def gui():
     app.mainloop()
     root.destroy()
 
+@command
+def site(*terms):
+    with open(SITE_CONF_PATH, 'a') as outFile:
+        outFile.write(" ".join(terms) + "\n")
+    loadSites()
+
 def main():
     loadSites()
     global command
