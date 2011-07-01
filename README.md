@@ -23,7 +23,7 @@ editing. `rlwrap` must be in your `PATH` environment varible
 * Copy sites_sample.conf to sites.conf and edit it
     * `cp sites_sample.conf sites.conf`
     * `$EDITOR sites.conf`
-* read [sites_sample.conf](./blob/master/sites_sample.conf) for documentation on its syntax
+* read `sites_sample.conf` for documentation on its syntax
 * Fire up commander (optionally preceeded by `rlwrap` for history and line editing)
     * rlwrap python commander.py
 
@@ -43,7 +43,7 @@ right away.
 
 #Adding your own commands
 * Copy `mycommands_sample.py` to `mycommands.py` and edit it
-* Read the comments in [mycommands_sample.py](./blob/master/mycommands_sample.py) for tips
+* Read the comments in `mycommands_sample.py` for tips
 
 ## Keyboard Maestro
 
@@ -73,3 +73,14 @@ followed by the command such as "unmount", which is a little script that
 unmounts all my external disks so I can pack up my macbook. I can do this
 globally no matter where my keyboard focus is at the moment, and the UI is
 instantaneous.
+
+# License
+
+## Commander is licensed under the MIT License
+Copyright (c) 2011 Peter Lyons
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
