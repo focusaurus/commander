@@ -61,13 +61,17 @@ def alias(commandFunc, alias):
 
 def siteShower(URLs):
     "Generate a closure function to open a list of URLs in the browser"
-    def shower():
+    def shower(*terms):
         global SITE_CONF_MTIME
         newMtime = os.stat(SITE_CONF_PATH).st_mtime 
         if newMtime > SITE_CONF_MTIME:
             SITE_CONF_MTIME = newMtime
             loadSites()
-        [helpers.browser(URL) for URL in URLs]
+        for URL in URLs:
+            if URL.count("%s") == 1:
+                helpers.search(URL, terms)
+            else:
+                helpers.browser(URL)
     return shower
 
 def loadSites():
@@ -89,7 +93,13 @@ def loadSites():
             tokens = line.split()
             if len(tokens) < 2:
                 continue
-            commands[tokens[0]] = siteShower(tokens[1:])
+            keyword = tokens[0]
+            URLs = tokens[1:]
+            if keyword.find(","):
+                for alias in keyword.split(","):
+                    commands[alias] = siteShower(URLs)
+            else:
+                commands[keyword] = siteShower(URLs)
 
 def interpret(value):
     if not value:
