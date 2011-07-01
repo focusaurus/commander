@@ -8,6 +8,7 @@ import logging.handlers
 import os
 import re
 import shlex
+import subprocess
 import sys
 
 import helpers
@@ -96,12 +97,14 @@ def siteOpener(URLs):
     return opener
 
 def fullReload(command=""):
-    #TODO make rlwrap optional
     logger.info("Reloading commander.py")
-    os.execvp("rlwrap", ["rlwrap", sys.argv[0]] + \
-        #This makes sure the current command is not dropped, but
-        #passed on to the next process via command line
-        shlex.split(command))
+    #This makes sure the current command is not dropped, but
+    #passed on to the next process via command line
+    args = [sys.argv[0]] + shlex.split(command)
+    if wrapped():
+        os.execvp("rlwrap", ["rlwrap"] + args)
+    else:
+        os.execvp(sys.argv[0], args)
 
 def loadSites(*args):
     if (not os.access(SITE_CONF_PATH, os.R_OK)) or \
@@ -174,6 +177,12 @@ def unknown(command):
     message = "Unknown command: %s" % command
     sys.stderr.write(message + "\n")
     logger.debug(message)
+
+def wrapped():
+    output = subprocess.Popen(
+            ["ps", "-p", str(os.getppid()), "-o", "command"],
+            stdout=subprocess.PIPE).communicate()[0]
+    return output.count("rlwrap") > 0
 
 ########## Command Functions ##########
 @command

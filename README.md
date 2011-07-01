@@ -12,7 +12,7 @@ but out of the box it's good for
 #Supported OS
 * Currently this is tested only on OS X but it should work fine on linux (at 
   least eventually once I get around to testing it and making minor tweaks)
-* It uses an external [rlwrap](https://trac.macports.org/browser/trunk/dports/sysutils/rlwrap/Portfile) (Readline Wrap) program for history and line
+* It uses an (optional but suggested) external [rlwrap](https://trac.macports.org/browser/trunk/dports/sysutils/rlwrap/Portfile) (Readline Wrap) program for history and line
 editing. `rlwrap` must be in your `PATH` environment varible
 
 #Getting started
@@ -23,9 +23,9 @@ editing. `rlwrap` must be in your `PATH` environment varible
 * Copy sites_sample.conf to sites.conf and edit it
     * `cp sites_sample.conf sites.conf`
     * `$EDITOR sites.conf`
-* read `sites_sample.conf` for documentation on its syntax
-* Fire up commander
-    * python commander.py
+* read [sites_sample.conf]() for documentation on its syntax
+* Fire up commander (optionally preceeded by `rlwrap` for history and line editing)
+    * rlwrap python commander.py
 
 Once started, Commander will automatically reload as needed when files are
 updated, so don't worry about it.  You can use a new site added to `sites.conf`
@@ -35,7 +35,7 @@ right away.
 * quit
     * quits commander.py
 * site
-    * add a new site to site.conf
+    * add a new site to sites.conf
     * `site example http://site.example`
 * gui
     * A primitive TK gui I built for this.  Probably better to just run it
@@ -43,7 +43,7 @@ right away.
 
 #Adding your own commands
 * Copy `mycommands_sample.py` to `mycommands.py` and edit it
-* Read the comments in `mycommands_sample.py` for tips
+* Read the comments in [mycommands_sample.py]() for tips
 
 ## Keyboard Maestro
 
@@ -52,7 +52,7 @@ I wrote this as a complement to the excellent
 for lots of UI automation including assinging my most-used apps to the function
 keys on my macbook and text abbreviations.  I highly recommend it.  However,
 Keyboard Maestro does not seem to have the notion of triggering actions by
-global keystroke followed by typing a keyword then enter.  This is more along
+global keystroke followed by typing a keyword/phrase then enter.  This is more along
 the lines of other automation utilities like
 [LaunchBar](http://www.obdev.at/products/launchbar/index.html).
 You may also want to check out [Alfred](http://www.alfredapp.com/)
