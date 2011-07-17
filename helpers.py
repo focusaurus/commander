@@ -3,13 +3,9 @@
 import shlex
 import subprocess
 import types
-import urllib
+import urllib2
 
-def addProtocol(URL):
-    if not URL.lower().startswith("http"):
-        return "http://" + URL
-    return URL
-
+#These helpers are (currently) OS X specific
 def browser(args):
     if type(args) not in (types.ListType, types.TupleType):
         args = [args]
@@ -24,17 +20,42 @@ def maestro(scriptId):
     return """osascript -e 'tell application "Keyboard Maestro Engine" to """ \
        """do script "%s"'\n""" % scriptId
 
+def search(url, terms):
+    browser(url % quote(terms))
+#END of OS X specific stuff
+
+def addProtocol(URL):
+    if not URL.lower().startswith("http://"):
+        return "http://" + URL
+    return URL
+
 def run(args):
     if type(args) in types.StringTypes:
         args = shlex.split(args)
     subprocess.call(args)
 
-def search(url, terms):
-    browser(url % urlencode(terms)) 
-
-def urlencode(terms):
+def quote(terms):
     if type(terms) in types.StringTypes:
         terms = [terms.strip()]
     else:
         terms = [term.strip() for term in terms]
-    return urllib.quote_plus(" ".join(terms))
+    return urllib2.quote(" ".join(terms))
+
+def split(function):
+    """Create a decorated function that will get passed pre-split arguments.
+
+    This will wrap your command function such that the user entered string
+    argument will be passed to your function as a list of strings already
+    split by shlex.split.
+
+    CAREFUL if combining this decorator with the @command decorator.
+    @command must come FIRST in the source code (so it is executed last), and
+    the fully-decorated function is stored in the command map."""
+    logger.debug("Functon %s will get pre-split arguments" % \
+        function.__name__)
+    def wrapper(args):
+        logger.debug("Splitting args to %s: %s" % (function.__name__, args))
+        return function(shlex.split(args))
+    #maintain the same name so @command works properly
+    wrapper.__name__ = function.__name__
+    return wrapper

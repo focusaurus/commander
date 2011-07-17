@@ -2,12 +2,10 @@
 """This is a command line general purpose OS automation triggering mechanism.
 """
 from Tkinter import *
-import copy
 import logging
 import logging.handlers
 import os
 import re
-import shlex
 import subprocess
 import sys
 
@@ -15,7 +13,6 @@ import helpers
 
 EC_UNKNOWN_COMMAND = 11
 COMMENT_RE = re.compile("^\s*#")
-SITE_CONF_MTIME = -1
 SITE_CONF_PATH = os.path.join(os.path.dirname(sys.argv[0]), "sites.conf")
 logger = logging.getLogger("commander")
 
@@ -23,14 +20,15 @@ handler = logging.handlers.RotatingFileHandler(
     os.path.expanduser("~/.commander.log"), maxBytes=1024**2, backupCount=5)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)#BUGBUG
 
 #This is the global map of command names to command functions
 commands = {}
 
 reloaders = []
 class Reloader(object):
- 
+    """Check whether a file has been modified since the last check"""
+
     def __init__(self, path):
         self.path = path
         self.mtime = os.stat(self.path).st_mtime
@@ -39,7 +37,7 @@ class Reloader(object):
         if (not os.access(self.path, os.R_OK)) or \
                 (not os.path.isfile(self.path)):
             return False
-        newMTime = os.stat(self.path).st_mtime 
+        newMTime = os.stat(self.path).st_mtime
         if self.mtime < newMTime:
             self.mtime = newMTime
             return True
@@ -63,7 +61,6 @@ class Application(Frame):
         self.QUIT.pack()
 
     def run(self, *args):
-        print "Running", self.input.get()
         interpret(self.input.get())
         self.input.set("")
         #self.quit()
@@ -81,6 +78,7 @@ def command(function):
     commands[function.__name__] = function
     return function
 
+
 ########## Helper Methods ##########
 def alias(commandFunc, alias):
     commands[alias] = commandFunc
@@ -96,23 +94,13 @@ def siteOpener(URLs):
                 helpers.browser(URL)
     return opener
 
-def fullReload(command=""):
-    logger.info("Reloading commander.py")
-    #This makes sure the current command is not dropped, but
-    #passed on to the next process via command line
-    args = [sys.argv[0]] + shlex.split(command)
-    if wrapped():
-        os.execvp("rlwrap", ["rlwrap"] + args)
-    else:
-        os.execvp(sys.argv[0], args)
-
 def loadSites(*args):
     if (not os.access(SITE_CONF_PATH, os.R_OK)) or \
             (not os.path.isfile(SITE_CONF_PATH)):
         return
     #Purge any existing sites
     purged = []
-    for kw, func in copy.copy(commands).iteritems():
+    for kw, func in commands.copy().iteritems():
         if func.__name__ == "opener":
             purged.append(kw)
             del commands[kw]
@@ -148,7 +136,19 @@ def loadMyCommands(*args):
         reloaders.append(Reloader(path))
     except ImportError, info:
         logger.debug("Could not import mycommands module. %s" % info)
-    
+
+def fullReload(command=""):
+    logger.info("Reloading commander.py")
+    #This makes sure the current command is not dropped, but
+    #passed on to the next process via command line
+    args = [sys.argv[0], command]
+    sys.stdout.flush()
+    sys.stderr.flush()
+    if wrapped():
+        os.execvp("rlwrap", ["rlwrap"] + args)
+    else:
+        os.execvp(sys.argv[0], args)
+
 def interpret(value):
     if not value:
         #Typing CTRL-D at the prompt generates empty string, which means quit
@@ -160,16 +160,24 @@ def interpret(value):
     if not value:
         #Empty line, reprompt
         return
-    try:
-        args = shlex.split(value)
-    except ValueError:
-        args = value.split(" ")
-    command = (args[0] or "").lower()
-    args = args[1:]
+    args = None
+    if " " in value:
+        #At least one argument
+        command, args = value.split(" ", 1)
+    else:
+        command = value
+    command = command.lower()
     logger.debug("Looking for command %s in %s" % (command, commands.keys()))
     if command in commands:
-        logger.debug("Calling command function %s with args %s" % (command, args))
-        commands.get(command)(*args)
+        if args:
+            logger.debug("Calling command function %s with args %s" % \
+                (command, args))
+            #Do it with args!
+            commands.get(command)(args)
+        else:
+            logger.debug("Calling command function %s" % command)
+            #Do it without args!/
+            commands.get(command)()
     else:
         unknown(command)
 
@@ -211,7 +219,7 @@ def main():
     helpers.command = command
     helpers.alias = alias
     helpers.logger = logger
-    
+
     reloaders.append(Reloader(sys.argv[0]))
     reloaders.append(Reloader(SITE_CONF_PATH))
     loadSites()
