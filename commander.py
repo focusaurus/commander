@@ -71,17 +71,25 @@ class Application(Frame):
         self.createWidgets()
 
 
-#decorator function to store command functions in commands map
-def command(alias=None):
-    def wrap(function):
-        logger.debug("Adding function %s to commands map %s %s" % \
-            (function.__name__, id(commands), commands.keys()))
-        commands[function.__name__] = function
-        if alias:
-            logger.debug("Aliasing %s as %s" % (function.__name__, alias))
-            commands[alias] = function
-    return wrap
+def add(function, name):
+    logger.debug("Adding function %s to commands map %s %s" % \
+        (name, id(commands), commands.keys()))
+    commands[name] = function
 
+#decorator function to store command functions in commands map
+def command(*args, **kwargs):
+    alias = kwargs.get("alias")
+    invoked = bool(not args or kwargs)
+    if invoked:
+        def wrapper(function):
+            add(function, function.__name__)
+            if alias:
+                add(function, alias)
+        return wrapper
+    else:
+        function = args[0]
+        add(function, function.__name__)
+        return function
 
 ########## Helper Methods ##########
 def siteOpener(URLs):
