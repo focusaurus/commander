@@ -20,7 +20,7 @@ handler = logging.handlers.RotatingFileHandler(
     os.path.expanduser("~/.commander.log"), maxBytes=1024**2, backupCount=5)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)#BUGBUG
+#logger.setLevel(logging.DEBUG)
 
 #This is the global map of command names to command functions
 commands = {}
@@ -72,17 +72,18 @@ class Application(Frame):
 
 
 #decorator function to store command functions in commands map
-def command(function):
-    logger.debug("Adding function %s to commands map %s %s" % \
-        (function.__name__, id(commands), commands.keys()))
-    commands[function.__name__] = function
-    return function
+def command(alias=None):
+    def wrap(function):
+        logger.debug("Adding function %s to commands map %s %s" % \
+            (function.__name__, id(commands), commands.keys()))
+        commands[function.__name__] = function
+        if alias:
+            logger.debug("Aliasing %s as %s" % (function.__name__, alias))
+            commands[alias] = function
+    return wrap
 
 
 ########## Helper Methods ##########
-def alias(commandFunc, alias):
-    commands[alias] = commandFunc
-
 def siteOpener(URLs):
     "Generate a closure function to open a list of URLs in the browser"
     #Note: If you rename this function, rename it inside loadSites as well
@@ -193,10 +194,9 @@ def wrapped():
     return output.count("rlwrap") > 0
 
 ########## Command Functions ##########
-@command
+@command(alias="q")
 def quit():
     sys.exit(0)
-alias(quit, "q")
 
 @command
 def gui():
@@ -217,7 +217,6 @@ def main():
     #Expose our decorator and helpers via the helper module
     #This avoids a circular dependency with mycommands
     helpers.command = command
-    helpers.alias = alias
     helpers.logger = logger
 
     reloaders.append(Reloader(sys.argv[0]))
