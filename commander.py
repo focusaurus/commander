@@ -185,8 +185,11 @@ def interpret(value):
             commands.get(command)(args)
         else:
             logger.debug("Calling command function %s" % command)
-            #Do it without args!/
-            commands.get(command)()
+            #Do it without args!
+            try:
+                commands.get(command)('')
+            except TypeError:
+                commands.get(command)()
     else:
         unknown(command)
 

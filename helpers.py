@@ -1,5 +1,6 @@
 #Note that names "command", "alias", and "logger"
 #Will be injected at runtime via commander.py
+import os
 import shlex
 import subprocess
 import types
@@ -10,10 +11,18 @@ def browser(args):
     if type(args) not in (types.ListType, types.TupleType):
         args = [args]
     #TODO this only works on OS X. Add linux support
-    run(["open"] + args)
+    #atWork = True
+    atWork = False
+    browser = ["open"]
+    if atWork:
+        browser.extend(["-a", "firefox"])
+    run(browser + args)
 
 def copyText(text):
     popen = subprocess.Popen("pbcopy", stdin=subprocess.PIPE).communicate(text)
+
+def expandPath(path):
+    return os.path.abspath(os.path.expanduser(path))
 
 def maestro(scriptId):
     """Run a Keyboard Maestro script by ID (more robust) or name"""
