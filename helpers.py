@@ -26,8 +26,8 @@ def expandPath(path):
 
 def maestro(scriptId):
     """Run a Keyboard Maestro script by ID (more robust) or name"""
-    return """osascript -e 'tell application "Keyboard Maestro Engine" to """ \
-       """do script "%s"'\n""" % scriptId
+    run("""osascript -e 'tell application "Keyboard Maestro Engine" to """ \
+       """do script "%s"'\n""" % scriptId)
 
 def search(url, terms):
     browser(url % quote(terms))
