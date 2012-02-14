@@ -1,5 +1,6 @@
 #Note that names "command", "alias", and "logger"
 #Will be injected at runtime via commander.py
+import glob
 import os
 import shlex
 import subprocess
@@ -24,6 +25,9 @@ def copyText(text):
 def expandPath(path):
     return os.path.abspath(os.path.expanduser(path))
 
+def expandGlob(path):
+    return glob.glob(expandPath(path))
+
 def maestro(scriptId):
     """Run a Keyboard Maestro script by ID (more robust) or name"""
     run("""osascript -e 'tell application "Keyboard Maestro Engine" to """ \
@@ -41,6 +45,7 @@ def addProtocol(URL):
 def run(args):
     if type(args) in types.StringTypes:
         args = shlex.split(args)
+    logger.debug("run: %s" % args)
     subprocess.call(args)
 
 def quote(terms):
