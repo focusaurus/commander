@@ -85,6 +85,7 @@ def command(*args, **kwargs):
             add(function, function.__name__)
             if alias:
                 add(function, alias)
+            return function
         return wrapper
     else:
         function = args[0]
