@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """This is a command line general purpose OS automation triggering mechanism.
 """
 from Tkinter import *
