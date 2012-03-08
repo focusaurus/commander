@@ -17,7 +17,7 @@ SITE_CONF_PATH = os.path.join(os.path.dirname(sys.argv[0]), "sites.conf")
 logger = logging.getLogger("commander")
 
 handler = logging.handlers.RotatingFileHandler(
-    os.path.expanduser("~/.commander.log"), maxBytes=1024**2, backupCount=5)
+    os.path.expanduser("~/.commander.log"), maxBytes=1024 ** 2, backupCount=5)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 #logger.setLevel(logging.DEBUG)
@@ -26,6 +26,8 @@ logger.setLevel(logging.INFO)
 commands = {}
 
 reloaders = []
+
+
 class Reloader(object):
     """Check whether a file has been modified since the last check"""
 
@@ -55,8 +57,8 @@ class Application(Frame):
 
         self.QUIT = Button(self)
         self.QUIT["text"] = "QUIT"
-        self.QUIT["fg"]   = "red"
-        self.QUIT["command"] =  self.quit
+        self.QUIT["fg"] = "red"
+        self.QUIT["command"] = self.quit
 
         self.QUIT.pack()
 
@@ -76,8 +78,9 @@ def add(function, name):
         (name, id(commands), commands.keys()))
     commands[name] = function
 
-#decorator function to store command functions in commands map
+
 def command(*args, **kwargs):
+    """decorator function to store command functions in commands map"""
     alias = kwargs.get("alias")
     invoked = bool(not args or kwargs)
     if invoked:
@@ -93,6 +96,8 @@ def command(*args, **kwargs):
         return function
 
 ########## Helper Methods ##########
+
+
 def siteOpener(URLs):
     "Generate a closure function to open a list of URLs in the browser"
     #Note: If you rename this function, rename it inside loadSites as well
@@ -103,6 +108,7 @@ def siteOpener(URLs):
             else:
                 helpers.browser(URL)
     return opener
+
 
 def loadSites(*args):
     if (not os.access(SITE_CONF_PATH, os.R_OK)) or \
@@ -133,6 +139,7 @@ def loadSites(*args):
             else:
                 commands[keyword] = siteOpener(URLs)
 
+
 def loadMyCommands(*args):
     logger.info("loading mycommands")
     try:
@@ -142,10 +149,11 @@ def loadMyCommands(*args):
         path = mycommands.__file__
         logger.info("Loaded mycommands from: " + path)
         if path.endswith("pyc"):
-            path = path[0:-1] #Watch the .py file for change, not the .pyc
+            path = path[0:-1]  # Watch the .py file for change, not the .pyc
         reloaders.append(Reloader(path))
     except ImportError, info:
         logger.debug("Could not import mycommands module. %s" % info)
+
 
 def fullReload(command=""):
     logger.info("Reloading commander.py")
@@ -159,13 +167,14 @@ def fullReload(command=""):
     else:
         os.execvp(sys.argv[0], args)
 
+
 def interpret(value):
     if not value:
         #Typing CTRL-D at the prompt generates empty string, which means quit
         return quit()
     for reloader in reloaders:
         if reloader.check():
-            fullReload(value) #This will exit the process and re-execute
+            fullReload(value)  # This will exit the process and re-execute
     value = value.strip()
     if not value:
         #Empty line, reprompt
@@ -194,10 +203,12 @@ def interpret(value):
     else:
         unknown(command)
 
+
 def unknown(command):
     message = "Unknown command: %s" % command
     sys.stderr.write(message + "\n")
     logger.debug(message)
+
 
 def wrapped():
     output = subprocess.Popen(
@@ -206,9 +217,12 @@ def wrapped():
     return output.count("rlwrap") > 0
 
 ########## Command Functions ##########
+
+
 @command(alias="q")
 def quit():
     sys.exit(0)
+
 
 @command
 def gui():
@@ -218,11 +232,13 @@ def gui():
     app.mainloop()
     root.destroy()
 
+
 @command
 def site(*terms):
     with open(SITE_CONF_PATH, 'a') as outFile:
         outFile.write(" ".join(terms) + "\n")
     loadSites()
+
 
 def main():
     global command
