@@ -87,6 +87,24 @@ def split(function):
     wrapper.__name__ = function.__name__
     return wrapper
 
+def noNewlines(function):
+    """Creat a decorator to convert new lines to spaces.
+
+    This will wrap your command function such that the user entered string
+    argument will have any internal newlines converted to spaces.
+
+    CAREFUL if combining this decorator with the @command decorator.
+    @command must come FIRST in the source code (so it is executed last), and
+    the fully-decorated function is stored in the command map."""
+    logger.debug("Functon %s will get spaces instead of newlines" % \
+        function.__name__)
+
+    def wrapper(args):
+        logger.debug("no newlines in args to %s: %s" % (function.__name__, args))
+        return function(args.replace("\n", ""))
+    #maintain the same name so @command works properly
+    wrapper.__name__ = function.__name__
+    return wrapper
 
 def clipboard(function):
     """Create a decorated function that default to clipboard.
