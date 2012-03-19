@@ -47,9 +47,9 @@ def search(url, terms):
 
 
 def addProtocol(URL):
-    if not URL.lower().startswith("http://"):
-        return "http://" + URL
-    return URL
+    if URL.find("://") >= 0:
+        return URL
+    return "http://" + URL
 
 
 def run(args):
@@ -82,7 +82,7 @@ def split(function):
 
     def wrapper(args):
         logger.debug("Splitting args to %s: %s" % (function.__name__, args))
-        return function(shlex.split(args))
+        return function(*shlex.split(args))
     #maintain the same name so @command works properly
     wrapper.__name__ = function.__name__
     return wrapper
