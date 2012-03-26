@@ -20,11 +20,10 @@ handler = logging.handlers.RotatingFileHandler(
     os.path.expanduser("~/.commander.log"), maxBytes=1024 ** 2, backupCount=5)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 #This is the global map of command names to command functions
 commands = {}
-
 reloaders = []
 
 
@@ -186,7 +185,9 @@ def interpret(value):
     else:
         command = value
     command = command.lower()
-    logger.debug("Looking for command %s in %s" % (command, commands.keys()))
+    keys = commands.keys()
+    keys.sort()
+    logger.debug("Looking for command '%s' in %s" % (command, keys))
     if command in commands:
         if args:
             logger.debug("Calling command function %s with args %s" % \
@@ -251,14 +252,17 @@ def main():
     reloaders.append(Reloader(SITE_CONF_PATH))
     loadSites()
     loadMyCommands()
-
+    tty = sys.stdin.isatty()
     commandLineCommand = " ".join(sys.argv[1:])
     if commandLineCommand:
         interpret(commandLineCommand)
+    inFile = open(sys.argv[1], "r+")
     while True:
-        sys.stdout.write("> ")
-        command = sys.stdin.readline()
-        helpers.run("clear")
+        #if tty:
+        #    sys.stdout.write("> ")
+        command = inFile.readline()
+        #if tty:
+        #    helpers.run("clear")
         interpret(command)
 
 if __name__ == "__main__":
