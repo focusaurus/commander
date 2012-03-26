@@ -52,11 +52,15 @@ def addProtocol(URL):
     return "http://" + URL
 
 
-def run(args):
-    if type(args) in types.StringTypes:
-        args = shlex.split(args)
-    logger.debug("run: %s" % args)
-    subprocess.call(args)
+def run(*args):
+    toRun = []
+    for arg in args:
+        if type(arg) in types.StringTypes:
+            toRun.extend(shlex.split(arg))
+        else:
+            toRun.extend(arg)
+    logger.debug("run: %s" % toRun)
+    subprocess.call(toRun)
 
 
 def quote(terms):
