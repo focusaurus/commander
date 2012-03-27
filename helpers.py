@@ -1,5 +1,6 @@
 #Note that names "command", "alias", and "logger"
 #Will be injected at runtime via commander.py
+import fnmatch
 import glob
 import os
 import shlex
@@ -27,14 +28,6 @@ def pbpaste():
         stdout=subprocess.PIPE).stdout.read().strip()
 
 
-def expandPath(path):
-    return os.path.abspath(os.path.expanduser(path))
-
-
-def expandGlob(path):
-    return glob.glob(expandPath(path))
-
-
 def maestro(scriptId):
     """Run a Keyboard Maestro script by ID (more robust) or name"""
     run("""osascript -e 'tell application "Keyboard Maestro Engine" to """ \
@@ -44,6 +37,23 @@ def maestro(scriptId):
 def search(url, terms):
     browser(url % quote(terms))
 #END of OS X specific stuff
+
+
+def expandPath(path):
+    return os.path.abspath(os.path.expanduser(path))
+
+
+def expandGlob(path):
+    return glob.glob(expandPath(path))
+
+
+def deepGlob(directory, pattern):
+    directory = expandPath(directory)
+    results = []
+    for base, dirs, files in os.walk(directory):
+        goodfiles = fnmatch.filter(files, pattern)
+        results.extend(os.path.join(base, f) for f in goodfiles)
+    return results
 
 
 def addProtocol(URL):

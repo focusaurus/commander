@@ -152,7 +152,7 @@ def loadMyCommands(*args):
             path = path[0:-1]  # Watch the .py file for change, not the .pyc
         reloaders.append(Reloader(path))
     except ImportError, info:
-        logger.debug("Could not import mycommands module. %s" % info)
+        logger.error("Could not import mycommands module. %s" % info)
 
 
 def fullReload(command=""):
@@ -222,6 +222,13 @@ def wrapped():
 @command(alias="q")
 def quit():
     sys.exit(0)
+
+
+@command
+def help():
+    keys = commands.keys()
+    keys.sort()
+    print keys
 
 
 @command
