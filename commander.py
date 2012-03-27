@@ -2,6 +2,7 @@
 """This is a command line general purpose OS automation triggering mechanism.
 """
 from Tkinter import *
+import argparse
 import logging
 import logging.handlers
 import os
@@ -151,7 +152,7 @@ def loadMyCommands(*args):
             path = path[0:-1]  # Watch the .py file for change, not the .pyc
         reloaders.append(Reloader(path))
     except ImportError, info:
-        logger.debug("Could not import mycommands module. %s" % info)
+        logger.error("Could not import mycommands module. %s" % info)
 
 
 def fullReload(command=""):
@@ -219,6 +220,11 @@ def wrapped():
 
 ########## Command Functions ##########
 
+@command
+def help():
+    keys = commands.keys()
+    keys.sort()
+    print keys
 
 @command(alias="q")
 def quit():
@@ -241,6 +247,16 @@ def site(*terms):
     loadSites()
 
 
+def parseArgs(args=sys.argv):
+    parser = argparse.ArgumentParser(description="Command Line Bliss")
+    parser.add_argument('--input', metavar='F', type=argparse.FileType("r+"),
+        default=sys.stdin, nargs="?", help='file (FIFO usually) for integrating with shells')
+    parser.add_argument('--output', metavar='F', type=argparse.FileType("w"),
+        default=sys.stdout, nargs="?", help='file (FIFO usually) for integrating with shells')
+    parser.add_argument("command", nargs="*")
+    return parser.parse_args()
+
+
 def main():
     global command
     #Expose our decorator and helpers via the helper module
@@ -252,17 +268,17 @@ def main():
     reloaders.append(Reloader(SITE_CONF_PATH))
     loadSites()
     loadMyCommands()
-    tty = sys.stdin.isatty()
-    commandLineCommand = " ".join(sys.argv[1:])
+    args = parseArgs()
+    tty = args.input.isatty()
+    commandLineCommand = " ".join(args.command)
     if commandLineCommand:
         interpret(commandLineCommand)
-    inFile = open(sys.argv[1], "r+")
     while True:
-        #if tty:
-        #    sys.stdout.write("> ")
-        command = inFile.readline()
-        #if tty:
-        #    helpers.run("clear")
+        if tty:
+            args.output.write("> ")
+        command = args.input.readline()
+        if tty:
+            helpers.run("clear")
         interpret(command)
 
 if __name__ == "__main__":
