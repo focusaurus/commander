@@ -220,11 +220,13 @@ def wrapped():
 
 ########## Command Functions ##########
 
+
 @command
 def help():
     keys = commands.keys()
     keys.sort()
     print keys
+
 
 @command(alias="q")
 def quit():
