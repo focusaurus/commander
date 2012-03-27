@@ -249,9 +249,9 @@ def site(*terms):
 
 def parseArgs(args=sys.argv):
     parser = argparse.ArgumentParser(description="Command Line Bliss")
-    parser.add_argument('--input', metavar='F', type=argparse.FileType("r+"),
+    parser.add_argument('--in', metavar='F', type=argparse.FileType("r+"),
         default=sys.stdin, nargs="?", help='file (FIFO usually) for integrating with shells')
-    parser.add_argument('--output', metavar='F', type=argparse.FileType("w"),
+    parser.add_argument('--out', metavar='F', type=argparse.FileType("w"),
         default=sys.stdout, nargs="?", help='file (FIFO usually) for integrating with shells')
     parser.add_argument("command", nargs="*")
     return parser.parse_args()
@@ -269,14 +269,15 @@ def main():
     loadSites()
     loadMyCommands()
     args = parseArgs()
-    tty = args.input.isatty()
+    inFile = vars(args)["in"]
+    tty = inFile.isatty()
     commandLineCommand = " ".join(args.command)
     if commandLineCommand:
         interpret(commandLineCommand)
     while True:
         if tty:
-            args.output.write("> ")
-        command = args.input.readline()
+            args.out.write("> ")
+        command = inFile.readline()
         if tty:
             helpers.run("clear")
         interpret(command)
