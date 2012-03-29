@@ -2,6 +2,7 @@
 """This is a command line general purpose OS automation triggering mechanism.
 """
 from Tkinter import *
+import argparse
 import logging
 import logging.handlers
 import os
@@ -20,11 +21,10 @@ handler = logging.handlers.RotatingFileHandler(
     os.path.expanduser("~/.commander.log"), maxBytes=1024 ** 2, backupCount=5)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 #This is the global map of command names to command functions
 commands = {}
-
 reloaders = []
 
 
@@ -186,7 +186,9 @@ def interpret(value):
     else:
         command = value
     command = command.lower()
-    logger.debug("Looking for command %s in %s" % (command, commands.keys()))
+    keys = commands.keys()
+    keys.sort()
+    logger.debug("Looking for command '%s' in %s" % (command, keys))
     if command in commands:
         if args:
             logger.debug("Calling command function %s with args %s" % \
@@ -219,6 +221,13 @@ def wrapped():
 ########## Command Functions ##########
 
 
+@command
+def help():
+    keys = commands.keys()
+    keys.sort()
+    print keys
+
+
 @command(alias="q")
 def quit():
     sys.exit(0)
@@ -247,6 +256,16 @@ def site(*terms):
     loadSites()
 
 
+def parseArgs(args=sys.argv):
+    parser = argparse.ArgumentParser(description="Command Line Bliss")
+    parser.add_argument('--in', metavar='F', type=argparse.FileType("r+"),
+        default=sys.stdin, nargs="?", help='file (FIFO usually) for integrating with shells')
+    parser.add_argument('--out', metavar='F', type=argparse.FileType("w"),
+        default=sys.stdout, nargs="?", help='file (FIFO usually) for integrating with shells')
+    parser.add_argument("command", nargs="*")
+    return parser.parse_args()
+
+
 def main():
     global command
     #Expose our decorator and helpers via the helper module
@@ -258,14 +277,18 @@ def main():
     reloaders.append(Reloader(SITE_CONF_PATH))
     loadSites()
     loadMyCommands()
-
-    commandLineCommand = " ".join(sys.argv[1:])
+    args = parseArgs()
+    inFile = vars(args)["in"]
+    tty = inFile.isatty()
+    commandLineCommand = " ".join(args.command)
     if commandLineCommand:
         interpret(commandLineCommand)
     while True:
-        sys.stdout.write("> ")
-        command = sys.stdin.readline()
-        helpers.run("clear")
+        if tty:
+            args.out.write("> ")
+        command = inFile.readline()
+        if tty:
+            helpers.run("clear")
         interpret(command)
 
 if __name__ == "__main__":
