@@ -24,7 +24,7 @@ def siteOpener(URLs):
     return opener
 
 
-def loadSites():
+def loadSites(*ignore):
     if (not os.access(SITE_CONF_PATH, os.R_OK)) or \
             (not os.path.isfile(SITE_CONF_PATH)):
         return

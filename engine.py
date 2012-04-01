@@ -60,7 +60,6 @@ class Engine(object):
         command = command.lower()
         keys = self._commands.keys()
         keys.sort()
-        print(id(self._commands))
         logger.debug("Looking for command '%s' in %s" % (command, keys))
         if command in self._commands:
             if args:

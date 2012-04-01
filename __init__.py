@@ -20,7 +20,6 @@ logger.setLevel(logging.INFO)
 #logger.setLevel(logging.DEBUG)
 
 engine = _engine.Engine()
-print("BUGBUG global engine has id", id(engine), "with commands", id(engine._commands))
 
 
 def command(*args, **kwargs):
@@ -76,13 +75,16 @@ def parseArgs(args=sys.argv):
     return parser.parse_args()
 
 
-def main():
-    engine.addReloader(sys.argv[0], fullReload)
+def main(args=sys.argv):
+    engine.addReloader(args[0].replace(".pyc", ".py"), fullReload)
+    engine.addReloader(__file__.replace(".pyc", ".py"), fullReload)
     #Load up the various submodules
     import builtins
+    engine.addReloader(builtins.__file__.replace(".pyc", ".py"), fullReload)
     import sites
+    engine.addReloader(sites.__file__.replace(".pyc", ".py"), fullReload)
     #loadMyCommands()
-    args = parseArgs()
+    args = parseArgs(args)
     inFile = vars(args)["in"]
     tty = inFile.isatty()
     commandLineCommand = " ".join(args.command)
@@ -97,7 +99,8 @@ def main():
             #which means quit
             sys.exit(0)
         if tty:
-            subprocess.call("clear")
+            #subprocess.call("clear")
+            pass
         engine.interpret(command)
 
 if __name__ == "__main__":

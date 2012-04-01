@@ -1,5 +1,6 @@
 from Tkinter import *
-from commander import command, interpret
+from commander import engine
+
 
 class Application(Frame):
     def createWidgets(self):
@@ -18,7 +19,7 @@ class Application(Frame):
         self.QUIT.pack()
 
     def run(self, *args):
-        interpret(self.input.get())
+        engine.interpret(self.input.get())
         self.input.set("")
         #self.quit()
 
@@ -28,7 +29,7 @@ class Application(Frame):
         self.createWidgets()
 
 
-@command
+@engine.command
 def gui():
     root = Tk()
     root.title("Commander")
