@@ -24,7 +24,7 @@ engine = _engine.Engine()
 
 
 def command(*args, **kwargs):
-    engine.command(*args, **kwargs)
+    return engine.command(*args, **kwargs)
 
 
 def fullReload(command=""):

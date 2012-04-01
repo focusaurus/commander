@@ -31,13 +31,16 @@ class Engine(object):
         alias = kwargs.get("alias")
         invoked = bool(not args or kwargs)
         if invoked:
-            def wrapper(function):
+            #Arguments passed to the decorator: @command(alias="foo")
+            #Must operate in decorator-factory mode
+            def addWithAlias(function):
                 self.add(function, function.__name__)
                 if alias:
                     self.add(function, alias)
                 return function
-            return wrapper
+            return addWithAlias
         else:
+            #Decorator used directly: @command
             function = args[0]
             self.add(function, function.__name__)
             return function
