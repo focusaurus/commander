@@ -19,28 +19,12 @@ logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
 #logger.setLevel(logging.DEBUG)
 
+"This is the shared global engine instance that holds the state"
 engine = _engine.Engine()
 
 
 def command(*args, **kwargs):
     engine.command(*args, **kwargs)
-
-
-# def loadMyCommands(*args):
-#     logger.info("loading mycommands")
-#     try:
-#         logger.debug(
-#             "Before mycommands we have %s" % globalEngine.commands().keys())
-#         import mycommands
-#         logger.debug(
-#             "After mycommands we have %s" % globalEngine.commands().keys())
-#         path = mycommands.__file__
-#         logger.info("Loaded mycommands from: " + path)
-#         if path.endswith("pyc"):
-#             path = path[0:-1]  # Watch the .py file for change, not the .pyc
-#         globalEngine.addReloader(path, fullReload)
-#     except ImportError, info:
-#         logger.error("Could not import mycommands module. %s" % info)
 
 
 def fullReload(command=""):
@@ -106,4 +90,4 @@ def main(args=sys.argv):
 if __name__ == "__main__":
     main()
 
-__all__ = ["engine", "gui", "helpers", "mac", "sites"]
+__all__ = ["builtins", "engine", "gui", "helpers", "mac", "sites"]
