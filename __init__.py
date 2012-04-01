@@ -8,8 +8,7 @@ import os
 import subprocess
 import sys
 
-import engine
-import helpers
+import engine as _engine
 
 logger = logging.getLogger("commander")
 handler = logging.handlers.RotatingFileHandler(
@@ -18,31 +17,31 @@ handler = logging.handlers.RotatingFileHandler(
 logger.addHandler(handler)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
-logger.setLevel(logging.DEBUG)
+#logger.setLevel(logging.DEBUG)
 
-print("BUGBUG about to instantiate global engine")
-globalEngine = engine.Engine(logger)
+engine = _engine.Engine()
+print("BUGBUG global engine has id", id(engine), "with commands", id(engine._commands))
 
 
 def command(*args, **kwargs):
-    globalEngine.command(*args, **kwargs)
+    engine.command(*args, **kwargs)
 
 
-def loadMyCommands(*args):
-    logger.info("loading mycommands")
-    try:
-        logger.debug(
-            "Before mycommands we have %s" % globalEngine.commands().keys())
-        import mycommands
-        logger.debug(
-            "After mycommands we have %s" % globalEngine.commands().keys())
-        path = mycommands.__file__
-        logger.info("Loaded mycommands from: " + path)
-        if path.endswith("pyc"):
-            path = path[0:-1]  # Watch the .py file for change, not the .pyc
-        globalEngine.addReloader(path, fullReload)
-    except ImportError, info:
-        logger.error("Could not import mycommands module. %s" % info)
+# def loadMyCommands(*args):
+#     logger.info("loading mycommands")
+#     try:
+#         logger.debug(
+#             "Before mycommands we have %s" % globalEngine.commands().keys())
+#         import mycommands
+#         logger.debug(
+#             "After mycommands we have %s" % globalEngine.commands().keys())
+#         path = mycommands.__file__
+#         logger.info("Loaded mycommands from: " + path)
+#         if path.endswith("pyc"):
+#             path = path[0:-1]  # Watch the .py file for change, not the .pyc
+#         globalEngine.addReloader(path, fullReload)
+#     except ImportError, info:
+#         logger.error("Could not import mycommands module. %s" % info)
 
 
 def fullReload(command=""):
@@ -78,24 +77,17 @@ def parseArgs(args=sys.argv):
 
 
 def main():
-    #Expose our decorator and helpers via the helper module
-    #This avoids a circular dependency with mycommands
-    helpers.logger = logger
-
-    globalEngine.addReloader(sys.argv[0], fullReload)
+    engine.addReloader(sys.argv[0], fullReload)
     #Load up the various submodules
-    #sites.init()
-    #loadSites()
+    import builtins
+    import sites
     #loadMyCommands()
-    #_globals = {"__builtins__": __builtins__, "command": globalEngine.command}
-    #builtins = __import__("builtins", _globals, {}, [], -1)
-    #import builtins
     args = parseArgs()
     inFile = vars(args)["in"]
     tty = inFile.isatty()
     commandLineCommand = " ".join(args.command)
     if commandLineCommand:
-        globalEngine.interpret(commandLineCommand)
+        engine.interpret(commandLineCommand)
     while True:
         if tty:
             args.out.write("> ")
@@ -105,9 +97,10 @@ def main():
             #which means quit
             sys.exit(0)
         if tty:
-            pass
-            #helpers.run("clear")
-        globalEngine.interpret(command)
+            subprocess.call("clear")
+        engine.interpret(command)
 
 if __name__ == "__main__":
     main()
+
+__all__ = ["engine", "gui", "helpers", "mac", "sites"]

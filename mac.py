@@ -3,14 +3,6 @@ import subprocess
 import types
 
 
-def browser(args):
-    if type(args) not in (types.ListType, types.TupleType):
-        args = [args]
-    #TODO this only works on OS X. Add linux support
-    browser = ["open"]
-    run(browser + args)
-
-
 def pbcopy(text):
     subprocess.Popen("pbcopy", stdin=subprocess.PIPE).communicate(text)
 
@@ -24,10 +16,6 @@ def maestro(scriptId):
     """Run a Keyboard Maestro script by ID (more robust) or name"""
     run("""osascript -e 'tell application "Keyboard Maestro Engine" to """ \
        """do script "%s"'\n""" % scriptId)
-
-
-def search(url, terms):
-    browser(url % quote(terms))
 
 
 def clipboard(function):

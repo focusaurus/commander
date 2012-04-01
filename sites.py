@@ -1,13 +1,15 @@
-import engine
 import helpers
-import re
+import logging
 import os
+import re
 import sys
+
+from commander import engine
 
 
 COMMENT_RE = re.compile("^\s*#")
 SITE_CONF_PATH = os.path.join(os.path.dirname(sys.argv[0]), "sites.conf")
-logger = engine.logger
+logger = logging.getLogger("commander")
 
 
 def siteOpener(URLs):
@@ -32,8 +34,8 @@ def loadSites():
         if func.__name__ == "opener":
             purged.append(kw)
             engine.remove(kw)
-    logger.debug("Purged site keyword commands: %s" % purged)
-    logger.info("Reloading %s" % SITE_CONF_PATH)
+    logger.debug("purged site keyword commands: %s" % purged)
+    logger.info("loading %s" % SITE_CONF_PATH)
     with open(SITE_CONF_PATH) as inFile:
         for line in inFile:
             if not line.strip():
@@ -45,13 +47,9 @@ def loadSites():
                 continue
             keyword = tokens[0]
             URLs = tokens[1:]
-            if keyword.find(","):
-                for alias in keyword.split(","):
-                    engine.commands[alias] = siteOpener(URLs)
-            else:
-                engine.add(keyword, siteOpener(URLs))
-
-engine.addReloader(SITE_CONF_PATH, loadSites)
+            for alias in keyword.split(","):
+                #logger.debug("Adding site opener function with alias '%s' for URLs '%s'" % (alias, URLs))
+                engine.add(siteOpener(URLs), alias)
 
 
 @engine.command
@@ -59,3 +57,6 @@ def site(*terms):
     with open(SITE_CONF_PATH, 'a') as outFile:
         outFile.write(" ".join(terms) + "\n")
     loadSites()
+
+engine.addReloader(SITE_CONF_PATH, loadSites)
+loadSites()

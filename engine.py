@@ -1,26 +1,24 @@
+import logging
 import os
 import sys
+
+logger = logging.getLogger("commander")
 
 
 class Engine(object):
 
-    def __init__(self, logger=None):
-        print("BUGBUG init an engine")
+    def __init__(self):
         #This is the map of command names to command functions
         self._commands = {}
         self._reloaders = []
-        self.logger = logger
-        self.command(self.help)
-        self.command(self.quit)
 
     def commands(self):
         return self._commands.copy()
 
     def add(self, function, name):
-        self.logger.debug("Adding function %s to commands map %s %s" % \
-            (name, id(self._commands), self._commands.keys()))
         self._commands[name] = function
-        print("BUGBUG now have", id(self._commands), self._commands)
+        logger.debug("engine.add %s engine: %s %s" % \
+            (name, id(self), self._commands.keys()))
 
     def remove(self, name):
         del self._commands[name]
@@ -63,16 +61,16 @@ class Engine(object):
         keys = self._commands.keys()
         keys.sort()
         print(id(self._commands))
-        self.logger.debug("Looking for command '%s' in %s" % (command, keys))
+        logger.debug("Looking for command '%s' in %s" % (command, keys))
         if command in self._commands:
             if args:
-                self.logger.debug(
+                logger.debug(
                     "Calling command function %s with args %s" % \
                     (command, args))
                 #Do it with args!
                 self._commands.get(command)(args)
             else:
-                self.logger.debug("Calling command function %s" % command)
+                logger.debug("Calling command function %s" % command)
                 #Do it without args!
                 try:
                     self._commands.get(command)('')
@@ -84,15 +82,7 @@ class Engine(object):
     def unknown(self, command):
         message = "Unknown command: %s" % command
         sys.stderr.write(message + "\n")
-        self.logger.debug(message)
-
-    def help(self):
-        keys = self._commands.keys()
-        keys.sort()
-        print keys
-
-    def quit(self):
-        sys.exit(0)
+        logger.debug(message)
 
 
 class Reloader(object):

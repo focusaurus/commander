@@ -1,13 +1,18 @@
 import fnmatch
 import glob
+import logging
 import os
 import shlex
 import subprocess
 import types
 import urllib2
+import webbrowser
 
-#Note that name "logger" will be injected at runtime
-logger = None
+logger = logging.getLogger("commander")
+
+
+def browser(*args):
+    [webbrowser.open(addProtocol(arg)) for arg in args]
 
 
 def expandPath(path):
@@ -42,6 +47,10 @@ def run(*args):
             toRun.extend(arg)
     logger.debug("run: %s" % toRun)
     subprocess.call(toRun)
+
+
+def search(url, terms):
+    browser(url % quote(terms))
 
 
 def quote(terms):

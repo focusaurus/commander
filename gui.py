@@ -1,6 +1,5 @@
 from Tkinter import *
-from engine import command, interpret
-
+from commander import command, interpret
 
 class Application(Frame):
     def createWidgets(self):
