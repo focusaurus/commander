@@ -12,7 +12,7 @@ logger = logging.getLogger("commander")
 
 
 def browser(*args):
-    [webbrowser.open(addProtocol(arg)) for arg in args]
+    [webbrowser.open_new_tab(addProtocol(arg)) for arg in args]
 
 
 def expandPath(path):

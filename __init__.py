@@ -2,9 +2,11 @@
 """Command line general purpose OS automation triggering mechanism.
 """
 import argparse
+import functools
 import logging
 import logging.handlers
 import os
+import re
 import subprocess
 import sys
 
@@ -18,6 +20,9 @@ logger.addHandler(handler)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
 #logger.setLevel(logging.DEBUG)
+
+
+pyc = functools.partial(re.compile("\.pyc$").sub, ".py")
 
 "This is the shared global engine instance that holds the state"
 engine = _engine.Engine()
@@ -60,13 +65,13 @@ def parseArgs(args=sys.argv):
 
 
 def main(args=sys.argv):
-    engine.addReloader(args[0].replace(".pyc", ".py"), fullReload)
-    engine.addReloader(__file__.replace(".pyc", ".py"), fullReload)
+    engine.addReloader(pyc(args[0]), fullReload)
+    engine.addReloader(pyc(__file__), fullReload)
     #Load up the various submodules
     import builtins
-    engine.addReloader(builtins.__file__.replace(".pyc", ".py"), fullReload)
+    engine.addReloader(pyc(builtins.__file__), fullReload)
     import sites
-    engine.addReloader(sites.__file__.replace(".pyc", ".py"), fullReload)
+    engine.addReloader(pyc(sites.__file__), fullReload)
     #loadMyCommands()
     args = parseArgs(args)
     inFile = vars(args)["in"]
