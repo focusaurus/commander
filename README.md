@@ -9,6 +9,24 @@ but out of the box it's good for
 * running programs and scripts
 * miscellaneous system automation
 
+# Snurtle: When a python crawls into your shell
+
+This program can be run in several different ways, but I'll tell you about the OMG-good way first.
+
+Unix shells are great (I prefer zsh). They give us the awesome in the form of:
+
+* good tab completion (zsh shines here)
+* great command line editing, even for long, wrapped lines
+* searchable command history
+* command history substitution
+
+However, shell scripts pale in comparison to more modern scripting languages like Python or Ruby when you have to do anything non-trivial or not made trivial by existing posix utilities. I want all that interactive goodness the shell provides plus a decent programming language. There's a way to make this possible that is fairly clean and low-maintenance: `command_not_found_handler`.
+
+`command_not_found_handler` function is a hook that zsh or bash (bash calls it `command_not_found_handle` though) will call whenever you type in something that doesn't match a target operation (a binary in your PATH, a builtin command, an alias, a function, etc). Ever seen an Ubuntu box tell you something like "The program 'cowsay' is currently not installed.  The program '%s' can be found in the following packages...". That's the [command-not-found](http://bazaar.launchpad.net/~command-not-found-developers/command-not-found/trunk/files) package using this hook to make that happen.
+
+So what does this mean? I can now write a python function that will be directly available to me in my shell as soon as I save my `.py` file. In here I can do whatever awesome python fanciness I want.
+
+To integrate with a shell, 
 #Supported OS
 * Currently this is tested only on OS X but it should work fine on linux (at 
   least eventually once I get around to testing it and making minor tweaks)

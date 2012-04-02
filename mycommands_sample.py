@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import os
 
-import commander
 #Import the @command decorator
 from commander import command
 
@@ -43,4 +42,5 @@ def calc():
     run("open -a Calculator")
 
 #Call commander.main() to start a read-eval-print-loop prompt
+import commander
 commander.main()
