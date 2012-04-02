@@ -1,8 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 import os
-#Use the helpers.py module for some utility functions
-#The most important one being the @command decorator
-from helpers import alias, browser, command, run
+
+#Import the @command decorator
+from commander import command
+
+#The helpers submodule has a bunch of handy utilities
+from commander.helpers import browser, run
 
 #Use the @command decorator to mark a function as a command line command
 #The function name is what you type at the prompt to execute it
@@ -13,10 +16,10 @@ def directions(*terms):
     url = "http://maps.google.com/maps?f=d&source=s_d&saddr=%s&daddr=%s"
     #Use browser or other functions from helpers.py as needed
     browser(url % (start.strip(), dest.strip()))
-#Use helpers.alias to have several names for the same function (abbreviations)
-alias(directions, "d")
 
-@command
+#Pass in an alias keyword argument to have an alternate name for the same
+#command function
+@command(alias="um")
 def unmount(*terms):
     vols = "/Volumes"
     for name in os.listdir(vols):
@@ -26,12 +29,18 @@ def unmount(*terms):
         if os.path.isdir(path):
             run(["diskutil", "unmount", path])
 
+
 @command
 def te():
     #helpers.run is a convenient way to run command line stuff
     #It can take a string or a list of string arguments
     run("open -a Textedit")
 
+
 @command
 def calc():
     run("open -a Calculator")
+
+#Call commander.main() to start a read-eval-print-loop prompt
+import commander
+commander.main()
