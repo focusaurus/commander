@@ -11,6 +11,8 @@ class Engine(object):
         #This is the map of command names to command functions
         self._commands = {}
         self._reloaders = []
+        self._preHooks = []
+        self._postHooks = []
 
     def commands(self):
         return self._commands.copy()
@@ -22,6 +24,18 @@ class Engine(object):
 
     def remove(self, name):
         del self._commands[name]
+
+    def addPreHook(self, hook):
+        self._preHooks.append(hook)
+
+    def addPostHook(self, hook):
+        self._postHooks.append(hook)
+
+    def removePreHook(self, hook):
+        self._preHooks.remove(hook)
+
+    def removePostHook(self, hook):
+        self._postHooks.remove(hook)
 
     def addReloader(self, path, hook):
         self._reloaders.append(Reloader(path, hook))
@@ -65,6 +79,7 @@ class Engine(object):
         keys.sort()
         logger.debug("Looking for command '%s' in %s" % (command, keys))
         if command in self._commands:
+            [hook(command) for hook in self._preHooks]
             if args:
                 logger.debug(
                     "Calling command function %s with args %s" % \
@@ -78,6 +93,7 @@ class Engine(object):
                     self._commands.get(command)('')
                 except TypeError:
                     self._commands.get(command)()
+            [hook(command) for hook in self._postHooks]
         else:
             self.unknown(command)
 
