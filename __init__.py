@@ -75,21 +75,17 @@ def main(args=sys.argv):
     #loadMyCommands()
     args = parseArgs(args)
     inFile = vars(args)["in"]
-    tty = inFile.isatty()
     commandLineCommand = " ".join(args.command)
     if commandLineCommand:
         engine.interpret(commandLineCommand)
     while True:
-        if tty:
+        if inFile.isatty():
             args.out.write("> ")
         command = inFile.readline()
         if not command:
             #Typing CTRL-D at the prompt generates empty string,
             #which means quit
             sys.exit(0)
-        if tty:
-            #subprocess.call("clear")
-            pass
         engine.interpret(command)
 
 if __name__ == "__main__":

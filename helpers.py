@@ -49,6 +49,10 @@ def run(*args):
     subprocess.call(toRun)
 
 
+def clear():
+    run("clear")
+
+
 def search(url, terms):
     browser(url % quote(terms))
 
