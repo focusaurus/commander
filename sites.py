@@ -12,6 +12,9 @@ SITE_CONF_PATH = os.path.join(os.path.dirname(sys.argv[0]), "sites.conf")
 logger = logging.getLogger("commander")
 
 
+def haveFile(path):
+    return os.access(path, os.R_OK) and os.path.isfile(path)
+
 def siteOpener(URLs):
     "Generate a closure function to open a list of URLs in the browser"
     #Note: If you rename this function, rename it inside loadSites as well
@@ -25,8 +28,7 @@ def siteOpener(URLs):
 
 
 def loadSites(*ignore):
-    if (not os.access(SITE_CONF_PATH, os.R_OK)) or \
-            (not os.path.isfile(SITE_CONF_PATH)):
+    if (not haveFile(SITE_CONF_PATH)):
         return
     #Purge any existing sites
     purged = []
@@ -58,5 +60,6 @@ def site(*terms):
         outFile.write(" ".join(terms) + "\n")
     loadSites()
 
-engine.addReloader(SITE_CONF_PATH, loadSites)
-loadSites()
+if haveFile(SITE_CONF_PATH):
+    engine.addReloader(SITE_CONF_PATH, loadSites)
+    loadSites()
