@@ -37,7 +37,7 @@ def loadSites(*ignore):
             purged.append(kw)
             engine.remove(kw)
     logger.debug("purged site keyword commands: %s" % purged)
-    logger.info("loading %s" % SITE_CONF_PATH)
+    logger.debug("loading %s" % SITE_CONF_PATH)
     with open(SITE_CONF_PATH) as inFile:
         for line in inFile:
             if not line.strip():

@@ -36,7 +36,7 @@ def command(*args, **kwargs):
 
 
 def fullReload(command=""):
-    logger.info("Reloading commander.py")
+    logger.debug("Reloading commander.py")
     #This makes sure the current command is not dropped, but
     #passed on to the next process via command line
     args = [sys.argv[0], command]
