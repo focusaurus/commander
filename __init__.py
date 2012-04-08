@@ -11,6 +11,9 @@ import subprocess
 import sys
 
 import engine as _engine
+#Import our useful submoduls so user scripts get everything they need
+import helpers
+import mac
 
 logger = logging.getLogger("commander")
 handler = logging.handlers.RotatingFileHandler(
