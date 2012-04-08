@@ -49,7 +49,7 @@ def run(*args):
     subprocess.call(toRun)
 
 
-def clear():
+def clear(*args, **kwargs):
     run("clear")
 
 
