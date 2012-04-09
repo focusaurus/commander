@@ -16,10 +16,12 @@ import helpers
 import mac
 
 logger = logging.getLogger("commander")
-handler = logging.handlers.RotatingFileHandler(
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+fileHandler = logging.handlers.RotatingFileHandler(
     os.path.expanduser("~/.commander.log"),
     maxBytes=1024 ** 2, backupCount=5)
-logger.addHandler(handler)
+fileHandler.setFormatter(formatter)
+logger.addHandler(fileHandler)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
 #logger.setLevel(logging.DEBUG)
