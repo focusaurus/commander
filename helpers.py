@@ -1,5 +1,6 @@
 import fnmatch
 import glob
+import functools
 import logging
 import os
 import shlex
@@ -78,16 +79,16 @@ def split(function):
     logger.debug("Functon %s will get pre-split arguments" % \
         function.__name__)
 
+    @functools.wraps(function)
     def wrapper(args):
         logger.debug("Splitting args to %s: %s" % (function.__name__, args))
         return function(*shlex.split(args))
-    #maintain the same name so @command works properly
-    wrapper.__name__ = function.__name__
+    wrapper.unwrapped = function
     return wrapper
 
 
 def noNewlines(function):
-    """Creat a decorator to convert new lines to spaces.
+    """Create a decorator to convert new lines to spaces.
 
     This will wrap your command function such that the user entered string
     argument will have any internal newlines converted to spaces.
@@ -98,9 +99,9 @@ def noNewlines(function):
     logger.debug("Functon %s will get spaces instead of newlines" % \
         function.__name__)
 
+    @functools.wraps(function)
     def wrapper(args):
         logger.debug("no newlines in args to %s: %s" % (function.__name__, args))
         return function(args.replace("\n", ""))
-    #maintain the same name so @command works properly
-    wrapper.__name__ = function.__name__
+    wrapper.unwrapped = function
     return wrapper
