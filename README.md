@@ -123,6 +123,11 @@ So what does this mean? It means now in your shell when you type a command your 
 
 For now, it is recommended that a new python process be started each time. This makes it easy to do interactive things like prompting for a password securely using the `getpass` module and so forth. However, commander can also read its input from a file via the `--in` command line argument. Thus it is possible for the shell to create a [fifo](http://www.gnu.org/software/libc/manual/html_node/FIFO-Special-Files.html), start a single long-running commander python process, and then feed it commands one at a time via the fifo. This avoids any startup/shutdown overhead and makes it easier for your commands to keep state in memory across multiple commands. However, it is not possible to interact with the tty in this mode, so you can't prompt the user for input (at least I haven't found a clean way yet). On most modern systems, the python startup is fast enough to be negligible, so single-command mode is probably sufficient. However, it's on my todo list to figure out a good way to do a background process IPC version.
 
+Note that if shell filename globbing is sometimes screwing with your commander arguments when you don't want it to, prefer your command with `noglob` to disable shell globbing for that single command.
+
+    noglob mycommand_that_needs_a_regex  f?art
+
+
 ##More info on command_not_found_handler
 
 `command_not_found_handler` function is a hook that zsh or bash (bash calls it `command_not_found_handle` though) will call whenever you type in something that doesn't match a target operation (a shell builtin command, an alias, a function, a binary in your PATH, etc). Ever seen an Ubuntu box tell you something like "The program 'cowsay' is currently not installed.  The program 'cowsay can be found in the following packages...". That's the [command-not-found](http://bazaar.launchpad.net/~command-not-found-developers/command-not-found/trunk/files) package using this hook to make that happen.
