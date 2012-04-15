@@ -40,6 +40,9 @@ class Engine(object):
     def addReloader(self, path, hook):
         self._reloaders.append(Reloader(path, hook))
 
+    def prompt(self):
+        return "> "
+
     def command(self, *args, **kwargs):
         """decorator function to store command functions in commands map"""
         alias = kwargs.get("alias")

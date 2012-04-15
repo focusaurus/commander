@@ -89,7 +89,7 @@ def main(args=sys.argv):
         sys.exit(0)
     while True:
         if inFile.isatty():
-            args.out.write("> ")
+            args.out.write(engine.prompt())
         command = inFile.readline()
         if not command:
             #Typing CTRL-D at the prompt generates empty string,
