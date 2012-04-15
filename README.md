@@ -1,96 +1,170 @@
 # Commander: Command Line Utility for Hackers and Poets
 
-This little utility gives you quick keyword-driven access to frequently used
-URLs, programs, scripts, etc.  You can extend it to do more or less anything, 
-but out of the box it's good for
+Commander is a task-automation utility. The basic idea is:
+
+* You write functions to do useful things in python
+* You decorate them with the `@command` decorator commander provides
+* You can now trigger your functions from the command line by name
+* You don't need to write boilerplate code and wrapper scripts
+* You can directly integrate your python commander functions into your interactive shell (!)
+
+Commander designed to run in one of several modes:
+
+1. As a standalone interactive REPL where you directly type commands
+1. Integrated into your existing shell. Your commander functions are available directly in your shell as if they were shell functions.
+1. As a build tool similar to [Make](http://en.wikipedia.org/wiki/List_of_build_automation_software), [Rake](http://rake.rubyforge.org/), or [Shovel](https://github.com/seomoz/shovel)
+
+#What can I do with it?
+
+Your commander functions can do just about anything since they are written in python. Out of the box, commander provides helpers to make the following things trivial.
 
 * Opening one or more browser URLs (bookmarks)
 * quick web based searches
 * running programs and scripts
 * miscellaneous system automation
+* Integrate with [Keyboard Maestro](http://www.keyboardmaestro.com/main/) on OS X for automation that is challenging from python such as manipulating windows, simulating mouse clicks, and so on
 
-# Snurtle: When a python crawls into your shell
+Here are some ideas to seed your mind with commander functions you may want to write.
 
-This program can be run in several different ways, but I'll tell you about the OMG-good way first.
+* Tweet something
+* Search for something on google, wikipedia, youtube, or any site or search engine
+* quickly check weather, stocks, sports scores, etc from the command line
+* quickly append notes to a journal file with a timestamp
+* add an item to your to-do list
+* see the last few git commit messages in a particular repository
+* perform an advanced renaming operation on all files under the current directory
+* perform a smart search/replace across a set of files
+* whatever else you feel would be useful to do from a command prompt
+* Anything that works better in python than as a shell script
 
-Unix shells are great (I prefer zsh). They give us the awesome in the form of:
+# Installation
 
-* good tab completion (zsh shines here)
-* great command line editing, even for long, wrapped lines
-* searchable command history
-* command history substitution
+Commander works will as a [git submodule](http://book.git-scm.com/5_submodules.html) under your [dotfiles](http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/) repository. Set it up like this.
 
-However, shell scripts pale in comparison to more modern scripting languages like Python or Ruby when you have to do anything non-trivial or not made trivial by existing posix utilities. I want all that interactive goodness the shell provides plus a decent programming language. There's a way to make this possible that is fairly clean and low-maintenance: `command_not_found_handler`.
 
-`command_not_found_handler` function is a hook that zsh or bash (bash calls it `command_not_found_handle` though) will call whenever you type in something that doesn't match a target operation (a binary in your PATH, a builtin command, an alias, a function, etc). Ever seen an Ubuntu box tell you something like "The program 'cowsay' is currently not installed.  The program '%s' can be found in the following packages...". That's the [command-not-found](http://bazaar.launchpad.net/~command-not-found-developers/command-not-found/trunk/files) package using this hook to make that happen.
+    cd ~/dotfiles
+    git submodule add git@github.com:focusaurus/commander.git commander
+    cp -a commander/commander_sample.py commander.py
 
-So what does this mean? I can now write a python function that will be directly available to me in my shell as soon as I save my `.py` file. In here I can do whatever awesome python fanciness I want.
+Then edit your `commander.py` script. Read the samples there to get then hang of it. Once you see how it works, feel free to delete the sample command functions defined there.
 
-To integrate with a shell, 
-#Supported OS
-* Currently this is tested only on OS X but it should work fine on linux (at 
-  least eventually once I get around to testing it and making minor tweaks)
-* It uses an (optional but suggested) external [rlwrap](https://trac.macports.org/browser/trunk/dports/sysutils/rlwrap/Portfile) (Readline Wrap) program for history and line
-editing. `rlwrap` must be in your `PATH` environment varible
+#Running Commander in single-command mode
 
-#Getting started
+By default, commander will start up, interpret the command given on the command line, then exit. This mode is good for:
 
-* clone this git repo
-* cd into the working directory
-    * `cd commander`
+1. built tool automation a la Make/Rake/Shovel
+1. invoking commander from a non-interactive shell script
+1. Learning commander
+1. Developing commander functions
+
+.
+
+    ./commander.py kablammo
+
+This would run your custom-defined "kablammo" function then exit.
+
+#Running an interactive REPL
+
+Commander can also run as a continuous interactive read-eval-print-loop.
+
+    ./commander.py --repl
+    > kablammo
+    >
+
+This would start the interactive prompt, run your custom-defined `kablammo` function, then prompt for the next command. Type CTRL-D, "quit", or "q" to quit and return back to your shell.
+
+This mode is good for:
+
+1. Keeping available in an easily-accessible shell tab
+1. Typing commands without worrying about shell quoting and globbing rules
+
+## Making the REPL better with rlwrap
+
+The external "readline wrap" `rlwrap` utility is highly recommended to add more sophisticated command line editing, history, etc to commander.
+
+* `apt-get install rlwrap` on Ubuntu/Debian
+* `brew install rlwrap` on OS X with [Homebrew](http://mxcl.github.com/homebrew/)
+* `yum install rlwrap` on RPM+yum based linux distros (untested)
+
+Then launch your repl like this:
+
+    rlwrap ./commander.py --repl
+
+You can now use the up arrow or CTRL-p to go back in your command history, etc.
+
+##Automatic reloading
+
+In repl mode, commander will watch the mtime on the code and configuration files and automatically reload itself when they change. If you add a new command to commander.py while a repl is already running, you can immediately use it in the repl. Same thing applies to `sites.conf`. You can use the `commander.engine.addReloader` function to watch additional files to trigger reloads.
+
+
+#Integrating commander into your regular shell
+## (Or: Complete Shell Nirvana)
+
+Here's the mode that will allow you to seamlessly integrate commander commands into your normal interactive [bash](http://tldp.org/LDP/abs/html/bashver4.html) or [zsh](http://www.zsh.org/). Once you get this set up, my hope is you'll take advantage of the power of python and write more and more of your sophisticated functionality as a commander function instead of a shell function. In this mode you get the best of both worlds of your shell and python.
+
+* All the normal shell features you love
+* Ability to define simple shell alias and functions in the shell as always
+* Ability to use environment variables (with tab completion, too)
+* Awesome tab completion
+* Awesome command editing
+* Awesome command history and history manipulation
+* filename globbing and pattern expantion
+* Commander integration
+  * Specifically your commander commands get all that good stuff, too: tab completion of environment variables, history searching, shell globbing, etc
+
+See `commander.sh` for a sample shell integration. You can source this file from your shell startup file (`~/.bashrc` or `~/.zshrc`), but more likely you can just use it as a guideline and set up your own variation suitable for your environment. In my own case, I use [virtualenvwrapper](http://www.doughellmann.com/projects/virtualenvwrapper/), so I run the proper `workon` command before launching my `commander.py` file.
+
+So what does this mean? It means now in your shell when you type a command your shell will look for that command as:
+
+* a shell built-in command
+* an alias or function
+* an executable file or script on your `PATH`
+* a commander function
+
+For now, it is recommended that a new python process be started each time. This makes it easy to do interactive things like prompting for a password securely using the `getpass` module and so forth. However, commander can also read its input from a file via the `--in` command line argument. Thus it is possible for the shell to create a [fifo](http://www.gnu.org/software/libc/manual/html_node/FIFO-Special-Files.html), start a single long-running commander python process, and then feed it commands one at a time via the fifo. This avoids any startup/shutdown overhead and makes it easier for your commands to keep state in memory across multiple commands. However, it is not possible to interact with the tty in this mode, so you can't prompt the user for input (at least I haven't found a clean way yet). On most modern systems, the python startup is fast enough to be negligible, so single-command mode is probably sufficient. However, it's on my todo list to figure out a good way to do a background process IPC version.
+
+##More info on command_not_found_handler
+
+`command_not_found_handler` function is a hook that zsh or bash (bash calls it `command_not_found_handle` though) will call whenever you type in something that doesn't match a target operation (a shell builtin command, an alias, a function, a binary in your PATH, etc). Ever seen an Ubuntu box tell you something like "The program 'cowsay' is currently not installed.  The program 'cowsay can be found in the following packages...". That's the [command-not-found](http://bazaar.launchpad.net/~command-not-found-developers/command-not-found/trunk/files) package using this hook to make that happen.
+
+#Built-in support for opening web sites
+
+Commander includes a `sites` module which gives you shortcuts to launch or search web sites from the command line. Your mapping of command trigger to URL is stored in a `sites.conf` configuration file. To set up the `sites` module:
+
+
 * Copy sites_sample.conf to sites.conf and edit it
-    * `cp sites_sample.conf sites.conf`
+    * `cp commander/sites_sample.conf commander/sites.conf`
     * `$EDITOR sites.conf`
 * read `sites_sample.conf` for documentation on its syntax
-* Fire up commander (optionally preceeded by `rlwrap` for history and line editing)
-    * rlwrap python commander.py
 
-Once started, Commander will automatically reload as needed when files are
-updated, so don't worry about it.  You can use a new site added to `sites.conf`
-right away.
+
+Now you can be hacking away in your shell, type `gh` (for example) and have [https://github.com]() open in a new browser tab. Passing in search terms via the query string is also supported by including a `%s` in the URL where the search terms go.
+
+To add a new site to the configuration file, use the `site` commander command, so just type "site zefrank http://www.zefrank.com/" and it will be added to the configuration file and immediately available.
 
 #Built in commands
-* quit
+* quit (also CTRL-D or just "q")
     * quits commander.py
-* site
-    * add a new site to sites.conf
-    * `site example http://site.example`
-* gui
-    * A primitive TK gui I built for this.  Probably better to just run it
-    in Terminal.app or gnome-terminal or whatever
+* help (also "?")
+    * Print a basic help message and a list of loaded commands
 
-#Adding your own commands
-* Copy `mycommands_sample.py` to `mycommands.py` and edit it
-* Read the comments in `mycommands_sample.py` for tips
+#Supported Environments
 
-## Keyboard Maestro
+* Python 2.7 (probably earlier versions, too)
+* OS X (10.7, 10.6, probably the rest of them)
+* Linux
 
-I wrote this as a complement to the excellent
-[Keyboard Maestro](http://www.keyboardmaestro.com/). I use Keyboard Maestro 
-for lots of UI automation including assinging my most-used apps to the function
-keys on my macbook and text abbreviations.  I highly recommend it.  However,
-Keyboard Maestro does not seem to have the notion of triggering actions by
-global keystroke followed by typing a keyword/phrase then enter.  This is more along
-the lines of other automation utilities like
-[LaunchBar](http://www.obdev.at/products/launchbar/index.html).
-You may also want to check out [Alfred](http://www.alfredapp.com/)
-or [Quicksilver](http://qsapp.com/). However, I've never been into "adaptive"
-automation and I like the simplicity and concreteness of knowing I'm tying into
-a dumb static script that is going to do the same thing every time until I
+
+# Keyboard Maestro
+
+I wrote this as a complement to the excellent [Keyboard Maestro](http://www.keyboardmaestro.com/). I use Keyboard Maestro for lots of UI automation including assinging my most-used apps to the function keys on my macbook and text abbreviations.  I highly recommend it.  However, Keyboard Maestro does not seem to have the notion of triggering actions by global keystroke followed by typing a keyword/phrase then enter.  This is more along the lines of other automation utilities like [Spotlight](http://en.wikipedia.org/wiki/Spotlight_(software)) or [LaunchBar](http://www.obdev.at/products/launchbar/index.html).
+You may also want to check out [Alfred](http://www.alfredapp.com/) or [Quicksilver](http://qsapp.com/). However, I've never been into "adaptive" automation and I like the simplicity and concreteness of knowing I'm typing into a dumb static script that is going to do the same thing every time until I
 change the code to do something else. That said, those commercial apps have
-bells and whistles out the wazoo, so if you need iCal integration graphical
-previews of your PDF files, have a look at them.
+bells and whistles out the wazoo, so if you need iCal integration graphical previews of your PDF files, have a look at them.
 
 ##My Workflow
 
-I map Command-Space to a Keyboard Maestro action that actives Terminal.app,
-positions the window at the top right corner, and resizes it to a small narrow
-strip.  In this window I keep the commander.py prompt running in a loop.  Thus
-to access any functionality I want from commander.py, I type Command-Space
-followed by the command such as "unmount", which is a little script that
-unmounts all my external disks so I can pack up my macbook. I can do this
-globally no matter where my keyboard focus is at the moment, and the UI is
-instantaneous.
+I map Command-Space to a Keyboard Maestro action that actives Terminal.app, positions the window at the top left corner, and resizes it to a small narrow strip.  In this window I keep the commander.py prompt running in the repl.  Thus to access any functionality I want from commander.py, I type Command-Space followed by the command such as "unmount", which is a little script that unmounts all my external disks so I can pack up my macbook. I can do this globally no matter where my keyboard focus is at the moment, and the UI is instantaneous.
 
 # License
 
