@@ -6,7 +6,8 @@ from commander import engine
 def help():
     keys = engine.commands().keys()
     keys.sort()
-    print keys
+    print 'Commander. CTRL-D or "quit" to quit. Available commands: '
+    print " ".join(keys)
 
 
 @engine.command(alias="q")

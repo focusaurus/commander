@@ -65,8 +65,8 @@ def parseArgs(args=sys.argv):
     parser.add_argument('--out', metavar='F', type=argparse.FileType("w"),
         default=sys.stdout, nargs="?",
         help='file (FIFO usually) for integrating with shells')
-    parser.add_argument('--one', action='store_true',
-        help='interpret one command from arguments then exit')
+    parser.add_argument('--repl', action='store_true',
+        help='start a read-eval-print-loop interactive commander session')
     parser.add_argument("command", nargs="*")
     return parser.parse_args()
 
@@ -85,7 +85,7 @@ def main(args=sys.argv):
     commandLineCommand = " ".join(args.command)
     if commandLineCommand:
         engine.interpret(commandLineCommand)
-    if args.one:
+    if not args.repl:
         sys.exit(0)
     while True:
         if inFile.isatty():
