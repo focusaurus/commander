@@ -27,7 +27,7 @@ logger.setLevel(logging.INFO)
 #logger.setLevel(logging.DEBUG)
 
 
-pyc = functools.partial(re.compile("\.pyc$").sub, ".py")
+pyc = functools.partial(re.compile("\.pyc$", re.I).sub, ".py")
 
 "This is the shared global engine instance that holds the state"
 engine = _engine.Engine()
@@ -38,16 +38,28 @@ def command(*args, **kwargs):
 
 
 def fullReload(command=""):
-    logger.debug("Reloading commander.py")
+    """Restart the Commander python process, preserving arguments"""
+    currentArgs = vars(parseArgs())
+    newArgs = []
+    for arg in ["in", "out"]:
+        fileName = currentArgs[arg].name
+        if fileName and fileName != "<std%s>" % arg:
+            newArgs.extend(["--" + arg, fileName])
+    if currentArgs["repl"]:
+        newArgs.append("--repl")
     #This makes sure the current command is not dropped, but
     #passed on to the next process via command line
-    args = [sys.argv[0], command]
+    newArgs.append(command)
+    newArgs.insert(0, sys.argv[0])
     sys.stdout.flush()
     sys.stderr.flush()
+    logger.debug(
+        "Commander reloading with args: %s %s" %
+            (sys.argv[0], " ".join(newArgs)))
     if wrapped():
-        os.execvp("rlwrap", ["rlwrap"] + args)
+        os.execvp("rlwrap", ["rlwrap"] + newArgs)
     else:
-        os.execvp(sys.argv[0], args)
+        os.execvp(sys.argv[0], newArgs)
 
 
 def wrapped():
@@ -79,7 +91,6 @@ def main(args=sys.argv):
     engine.addReloader(pyc(builtins.__file__), fullReload)
     import sites
     engine.addReloader(pyc(sites.__file__), fullReload)
-    #loadMyCommands()
     args = parseArgs(args)
     inFile = vars(args)["in"]
     commandLineCommand = " ".join(args.command)

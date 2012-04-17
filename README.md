@@ -155,7 +155,7 @@ To add a new site to the configuration file, use the `site` commander command, s
 
 #Supported Environments
 
-* Python 2.7 (probably earlier versions, too)
+* Python 2.7 (probably 2.6 will also work)
 * OS X (10.7, 10.6, probably the rest of them)
 * Linux
 
