@@ -159,6 +159,20 @@ To add a new site to the configuration file, use the `site` commander command, s
 * OS X (10.7, 10.6, probably the rest of them)
 * Linux
 
+#Using Commander over the network
+
+It is pretty straightforward to use the basic unix utilities of fifos and netcat to make commander work across the network. Note this is entirely cleartext and insecure. Also, netcat will only handle one connection at a time.
+
+* Create a [fifo](http://www.gnu.org/software/libc/manual/html_node/FIFO-Special-Files.html) for commander to use
+  * `mkfifo ~/.commander.fifo`
+* Start commander reading commands from that fifo
+  * `./commander.py --in ~/.commander.fifo --out ~/.commander.fifo --repl`
+* Start a local netcat daemon, sending its output to commander's fifo
+  * `nc -k -l 1234 > ~/.commander.fifo`
+* On a remote machine, use netcat as your commander shell
+  * nc host.where.you.started.commander.and.netcat.example 1234
+* Type your commander commands into that nc prompt and they will execute on the remote machine
+
 
 # Keyboard Maestro
 
