@@ -147,6 +147,9 @@ Now you can be hacking away in your shell, type `gh` (for example) and have [htt
 
 To add a new site to the configuration file, use the `site` commander command, so just type "site zefrank http://www.zefrank.com/" and it will be added to the configuration file and immediately available.
 
+Note that `sites.conf` supports aliases as the site keywords as well as multiple URLs opened in browser tabs. This is handy for projects. For example, if you have a project "zippio" and you always need your docs, development server, art repo, and github repo open in browser tabs, you can make a site called "zippio" that will open all of those pages in tabs.
+
+
 #Built in commands
 * quit (also CTRL-D or just "q")
     * quits commander.py
