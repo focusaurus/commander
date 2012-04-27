@@ -16,8 +16,8 @@
 #    fifo: start a long-running commander process connected to a fifo
 #    interpret: interpret a single command (Internal use only)
 commander() {
-    local EXEC="${COMMANDER_PATH-~/dotfiles/commander.py}"
-    local FIFO="${COMMANDER_FIFO-~/.commander_$$.fifo}"
+    local EXEC=${COMMANDER_PATH-~/dotfiles/commander.py}
+    local FIFO=${COMMANDER_FIFO-~/.commander_$$.fifo}
     case "${1}" in
         fifo)
             [ -p "${FIFO}" ] || mkfifo "${FIFO}"
@@ -30,7 +30,7 @@ commander() {
         repl)
             shift
             _commander_venv
-            if [ which rlwrap >/dev/null 2>&1 ]; then
+            if [ type rlwrap >/dev/null 2>&1 ]; then
                 EXEC="rlwrap ${EXEC}"
             fi
             "${EXEC}" --repl "${@}"
@@ -45,8 +45,11 @@ commander() {
                 kill "${COMMANDER_PID}"
             unset COMMANDER_PID
             [ -p "${FIFO}" ] && rm "${FIFO}"
-            unfunction command_not_found_handler 2>/dev/null
-            unfunction command_not_found_handle 2>/dev/null
+            if [ -n "${ZSH_VERSION}" ]; then
+                unfunction command_not_found_handler 2>/dev/null
+            else
+                unset -f command_not_found_handle
+            fi
         ;;
         interpret)
             shift
@@ -70,7 +73,7 @@ commander() {
 _commander_venv() {
     #virtualenvwrapper support
     [ -n "${COMMANDER_VENV}" ] && \
-        which workon > /dev/null 2>&1 && \
+        type workon > /dev/null 2>&1 && \
         workon "${COMMANDER_VENV}"
 }
 

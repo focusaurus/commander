@@ -39,11 +39,11 @@ Here are some ideas to seed your mind with commander functions you may want to w
 
 # Installation
 
-Commander works will as a [git submodule](http://book.git-scm.com/5_submodules.html) under your [dotfiles](http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/) repository. Set it up like this.
+Commander works well as a [git submodule](http://book.git-scm.com/5_submodules.html) under your [dotfiles](http://blog.smalleycreative.com/tutorials/using-git-and-github-to-manage-your-dotfiles/) repository. Set it up like this.
 
 
     cd ~/dotfiles
-    git submodule add git@github.com:focusaurus/commander.git commander
+    git submodule add git@github.com:focusaurus/commander.git
     cp -a commander/commander_sample.py commander.py
 
 Then edit your `commander.py` script. Read the samples there to get then hang of it. Once you see how it works, feel free to delete the sample command functions defined there.
@@ -170,6 +170,7 @@ Note that `sites.conf` supports aliases as the site keywords as well as multiple
 #Supported Environments
 
 * Python 2.7 (probably 2.6 will also work)
+* zsh or bash (version 4 or newer)
 * OS X (10.7, 10.6, probably the rest of them)
 * Linux
 
