@@ -112,7 +112,11 @@ Here's the mode that will allow you to seamlessly integrate commander commands i
 * Commander integration
   * Specifically your commander commands get all that good stuff, too: tab completion of environment variables, history searching, shell globbing, etc
 
-See `commander.sh` for a sample shell integration. You can source this file from your shell startup file (`~/.bashrc` or `~/.zshrc`), but more likely you can just use it as a guideline and set up your own variation suitable for your environment. In my own case, I use [virtualenvwrapper](http://www.doughellmann.com/projects/virtualenvwrapper/), so I run the proper `workon` command before launching my `commander.py` file.
+Source the `commander.sh` script from your shell's configuration file (`~/.bashrc` or `~/.zshrc`) like this:
+
+    [ -f ~/dotfiles/commander/commander.sh ] && source ~/dotfiles/commander/commander.sh
+
+Now you can turn on commander shell integration by typing `commander on`
 
 So what does this mean? It means now in your shell when you type a command your shell will look for that command as:
 
@@ -121,9 +125,16 @@ So what does this mean? It means now in your shell when you type a command your 
 * an executable file or script on your `PATH`
 * a commander function
 
+To turn off commander integration with your shell type `commander off`.
+
+To start commander in repl mode, type `commander repl`. This is good for a dedicated commander window and avoids having to deal with shell quoting and globbing rules.
+
+
 For now, it is recommended that a new python process be started each time. This makes it easy to do interactive things like prompting for a password securely using the `getpass` module and so forth. However, commander can also read its input from a file via the `--in` command line argument. Thus it is possible for the shell to create a [fifo](http://www.gnu.org/software/libc/manual/html_node/FIFO-Special-Files.html), start a single long-running commander python process, and then feed it commands one at a time via the fifo. This avoids any startup/shutdown overhead and makes it easier for your commands to keep state in memory across multiple commands. However, it is not possible to interact with the tty in this mode, so you can't prompt the user for input (at least I haven't found a clean way yet). On most modern systems, the python startup is fast enough to be negligible, so single-command mode is probably sufficient. However, it's on my todo list to figure out a good way to do a background process IPC version.
 
-Note that if shell filename globbing is sometimes screwing with your commander arguments when you don't want it to, prefer your command with `noglob` to disable shell globbing for that single command.
+To start commander shell integration in fifo mode, type `commander fifo`. Turn it off with `commander off`.
+
+Note that if shell filename globbing is sometimes screwing with your commander arguments when you don't want it to, prefix your command with `noglob` to disable shell globbing for that single command.
 
     noglob mycommand_that_needs_a_regex  f?art
 
@@ -186,7 +197,7 @@ bells and whistles out the wazoo, so if you need iCal integration graphical prev
 
 ##My Workflow
 
-I map Command-Space to a Keyboard Maestro action that actives Terminal.app, positions the window at the top left corner, and resizes it to a small narrow strip.  In this window I keep the commander.py prompt running in the repl.  Thus to access any functionality I want from commander.py, I type Command-Space followed by the command such as "unmount", which is a little script that unmounts all my external disks so I can pack up my macbook. I can do this globally no matter where my keyboard focus is at the moment, and the UI is instantaneous.
+I map Command-Space to a Keyboard Maestro macro that actives Terminal.app, positions the window at the top left corner, and resizes it to a small narrow strip.  In this window I keep the commander.py prompt running in the repl.  Thus to access any functionality I want from commander.py, I type Command-Space followed by the command such as "unmount", which is a little script that unmounts all my external disks so I can pack up my macbook. I can do this globally no matter where my keyboard focus is at the moment, and the UI is instantaneous.
 
 # License
 
