@@ -1,6 +1,6 @@
 from helpers import run
 import subprocess
-
+import functools
 
 def pbcopy(text):
     subprocess.Popen("pbcopy", stdin=subprocess.PIPE).communicate(text)
@@ -18,25 +18,25 @@ def maestro(scriptId):
 
 
 def clipboard(function):
-    """Create a decorated function that default to clipboard.
+    """Create a decorated function taking arguments from the system clipboard.
 
     This will wrap your command function such that the if the user did not
     provide any command line arguments, the contents of the OS clipboard will
     be used instead.
 
+    If the wrapped function returns something, the return value will be
+    copied to the clipboard.
+
     CAREFUL if combining this decorator with the @command decorator.
     @command must come FIRST in the source code (so it is executed last), and
     the fully-decorated function is stored in the command map."""
-    #logger.debug("Functon %s will default to clipboard argument" % \
-    #    function.__name__)
 
-    def wrapper(args):
-        if not args:
+    @functools.wraps(function)
+    def wrapper(*args):
+        if len(args) > 0 and not args[0]:
             args = pbpaste()
-            #logger.debug(
-            #    "Using clipboard as args to %s: %s" %
-             #   (function.__name__, args))
-        return function(args)
-    #maintain the same name so @command works properly
-    wrapper.__name__ = function.__name__
+        result = function(args)
+        if result:
+            pbcopy(str(result))
+        return result
     return wrapper
