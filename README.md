@@ -46,7 +46,7 @@ Commander works well as a [git submodule](http://book.git-scm.com/5_submodules.h
     git submodule add git@github.com:focusaurus/commander.git
     cp -a commander/commander_sample.py commander.py
 
-Then edit your `commander.py` script. Read the samples there to get then hang of it. Once you see how it works, feel free to delete the sample command functions defined there.
+Then edit your `commander.py` script. Read the samples there to get the hang of it. Once you see how it works, feel free to delete the sample command functions defined there.
 
 #Running Commander in single-command mode
 
@@ -57,7 +57,6 @@ By default, commander will start up, interpret the command given on the command 
 1. Learning commander
 1. Developing commander functions
 
-.
 
     ./commander.py kablammo
 
