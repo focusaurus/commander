@@ -24,7 +24,7 @@ fileHandler.setFormatter(formatter)
 logger.addHandler(fileHandler)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
-#logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.DEBUG)
 
 
 pyc = functools.partial(re.compile("\.pyc$", re.I).sub, ".py")

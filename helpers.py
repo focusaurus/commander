@@ -83,7 +83,6 @@ def split(function):
     def wrapper(args):
         logger.debug("Splitting args to %s: %s" % (function.__name__, args))
         return function(*shlex.split(args))
-    wrapper.unwrapped = function
     return wrapper
 
 
@@ -103,5 +102,4 @@ def noNewlines(function):
     def wrapper(args):
         logger.debug("no newlines in args to %s: %s" % (function.__name__, args))
         return function(args.replace("\n", ""))
-    wrapper.unwrapped = function
     return wrapper

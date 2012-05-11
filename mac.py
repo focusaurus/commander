@@ -1,6 +1,11 @@
 from helpers import run
+import logging
 import subprocess
 import functools
+
+
+logger = logging.getLogger("commander")
+
 
 def pbcopy(text):
     subprocess.Popen("pbcopy", stdin=subprocess.PIPE).communicate(text)
@@ -31,8 +36,11 @@ def clipboard(function):
     @command must come FIRST in the source code (so it is executed last), and
     the fully-decorated function is stored in the command map."""
 
+    logger.debug("clipboard called with %s", function)
+
     @functools.wraps(function)
-    def wrapper(*args):
+    def wrapper(args):
+        logger.debug("clipboard.wrapper called with %s", args)
         if len(args) > 0 and not args[0]:
             args = pbpaste()
         result = function(args)
