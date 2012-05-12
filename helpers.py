@@ -50,8 +50,14 @@ def run(*args):
     subprocess.call(toRun)
 
 
-def clear(*args, **kwargs):
-    run("clear")
+def clear(command):
+    if getattr(command, "clear", True):
+        run("clear")
+
+
+def noclear(function):
+    function.clear = False
+    return function
 
 
 def search(url, terms):

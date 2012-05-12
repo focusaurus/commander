@@ -82,21 +82,22 @@ class Engine(object):
         keys.sort()
         logger.debug("Looking for command '%s' in %s" % (command, keys))
         if command in self._commands:
-            [hook(command) for hook in self._preHooks]
+            commandFunc = self._commands.get(command)
+            [hook(commandFunc) for hook in self._preHooks]
             if args:
                 logger.debug(
                     "Calling command function %s with args %s" % \
                     (command, args))
                 #Do it with args!
-                self._commands.get(command)(args)
+                commandFunc(args)
             else:
                 logger.debug("Calling command function %s" % command)
                 #Do it without args!
                 try:
-                    self._commands.get(command)('')
+                    commandFunc('')
                 except TypeError:
-                    self._commands.get(command)()
-            [hook(command) for hook in self._postHooks]
+                    commandFunc()
+            [hook(commandFunc) for hook in self._postHooks]
         else:
             self.unknown(command)
 
