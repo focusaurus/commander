@@ -2,7 +2,7 @@ from helpers import run
 import logging
 import subprocess
 import functools
-
+import types
 
 logger = logging.getLogger("commander")
 
@@ -41,7 +41,9 @@ def clipboard(function):
     @functools.wraps(function)
     def wrapper(args):
         logger.debug("clipboard.wrapper called with %s", args)
-        if len(args) > 0 and not args[0]:
+        if type(args) in types.StringTypes and not args:
+            args = pbpaste()
+        elif not args[0]:
             args = pbpaste()
         result = function(args)
         if result:
