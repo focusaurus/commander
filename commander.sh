@@ -30,10 +30,11 @@ commander() {
         repl)
             shift
             _commander_venv
-            if [ type rlwrap >/dev/null 2>&1 ]; then
+            type rlwrap >/dev/null 2>&1
+            if [ $? ]; then
                 EXEC="rlwrap ${EXEC}"
             fi
-            "${EXEC}" --repl "${@}"
+            eval ${EXEC} --repl "${@}"
         ;;
         on)
             unset COMMANDER_PID
