@@ -64,7 +64,7 @@ commander() {
             return $?
         ;;
         *)
-            echo "Usage: commander on|off|fifo|interpret" 1>&2
+            echo "Usage: commander on|off|repl|fifo|interpret" 1>&2
             return 1
         ;;
     esac
