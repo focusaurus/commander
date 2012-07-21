@@ -101,12 +101,15 @@ def main(args=sys.argv):
     while True:
         if inFile.isatty():
             args.out.write(engine.prompt())
-        command = inFile.readline()
-        if not command:
-            #Typing CTRL-D at the prompt generates empty string,
-            #which means quit
+        try:
+            command = inFile.readline()
+            if not command:
+                #Typing CTRL-D at the prompt generates empty string,
+                #which means quit
+                sys.exit(0)
+            engine.interpret(command)
+        except KeyboardInterrupt:
             sys.exit(0)
-        engine.interpret(command)
 
 if __name__ == "__main__":
     main()
