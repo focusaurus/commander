@@ -50,6 +50,10 @@ def run(*args):
     subprocess.call(toRun)
 
 
+def script(script_text, interpreter="/bin/sh"):
+    subprocess.Popen(interpreter, stdin=subprocess.PIPE).communicate(script_text)
+
+
 def clear(command):
     if getattr(command, "clear", True):
         run("clear")
