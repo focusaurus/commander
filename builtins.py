@@ -1,8 +1,10 @@
 import sys
 from commander import engine
+from helpers import noclear
 
 
 @engine.command(alias="?")
+@noclear
 def help():
     keys = engine.commands().keys()
     keys.sort()
