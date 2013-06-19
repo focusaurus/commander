@@ -15,6 +15,7 @@ logger = logging.getLogger("commander")
 def haveFile(path):
     return os.access(path, os.R_OK) and os.path.isfile(path)
 
+
 def siteOpener(URLs):
     "Generate a closure function to open a list of URLs in the browser"
     #Note: If you rename this function, rename it inside loadSites as well
