@@ -76,7 +76,10 @@ def noclear(function):
 
 
 def search(url, terms):
-    browser(url % quote(terms))
+    try:
+        browser(url % quote(terms))
+    except TypeError:
+        print("Your URL placeholder is wrong. Fix and retry. %s" % url)
 
 
 def quote(terms):
