@@ -13,19 +13,19 @@ logger = logging.getLogger("commander")
 
 
 def browser(*args):
-    [webbrowser.open_new_tab(addProtocol(arg)) for arg in args]
+    [webbrowser.open_new_tab(add_protocol(arg)) for arg in args]
 
 
-def expandPath(path):
+def expand_path(path):
     return os.path.abspath(os.path.expanduser(path))
 
 
-def expandGlob(path):
-    return glob.glob(expandPath(path))
+def expand_glob(path):
+    return glob.glob(expand_path(path))
 
 
-def deepGlob(directory, pattern):
-    directory = expandPath(directory)
+def deep_glob(directory, pattern):
+    directory = expand_path(directory)
     results = []
     for base, dirs, files in os.walk(directory):
         goodfiles = fnmatch.filter(files, pattern)
@@ -33,7 +33,7 @@ def deepGlob(directory, pattern):
     return results
 
 
-def addProtocol(URL):
+def add_protocol(URL):
     if URL.find("://") >= 0:
         return URL
     return "http://" + URL
@@ -110,7 +110,7 @@ def split(function):
     return wrapper
 
 
-def noNewlines(function):
+def no_new_lines(function):
     """Create a decorator to convert new lines to spaces.
 
     This will wrap your command function such that the user entered string
