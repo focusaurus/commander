@@ -24,7 +24,7 @@ fileHandler.setFormatter(formatter)
 logger.addHandler(fileHandler)
 logger.addHandler(logging.StreamHandler())
 logger.setLevel(logging.INFO)
-#logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.DEBUG)
 
 
 pyc = functools.partial(re.compile("\.pyc$", re.I).sub, ".py")
@@ -91,6 +91,8 @@ def main(args=sys.argv):
     engine.addReloader(pyc(builtins.__file__), fullReload)
     import sites
     engine.addReloader(pyc(sites.__file__), fullReload)
+    import apps
+    engine.addReloader(pyc(apps.__file__), fullReload)
     args = parseArgs(args)
     inFile = vars(args)["in"]
     commandLineCommand = " ".join(args.command)
@@ -114,4 +116,4 @@ def main(args=sys.argv):
 if __name__ == "__main__":
     main()
 
-__all__ = ["builtins", "engine", "gui", "helpers", "mac", "sites"]
+__all__ = ["builtins", "engine", "gui", "helpers", "mac", "sites", "apps"]
