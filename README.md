@@ -159,6 +159,18 @@ To add a new site to the configuration file, use the `site` commander command, s
 
 Note that `sites.conf` supports aliases as the site keywords as well as multiple URLs opened in browser tabs. This is handy for projects. For example, if you have a project "zippio" and you always need your docs, development server, art repo, and github repo open in browser tabs, you can make a site called "zippio" that will open all of those pages in tabs.
 
+#Built-in support for OS X Applications
+
+Similar to the `sites` module there is an `apps` module which gives you the ability to define commander commands to launch Applications on OS X. To set up the `apps` module:
+
+* Copy apps_sample.conf to apps.conf and edit it
+    * `cp commander/apps_sample.conf commander/apps.conf`
+    * `$EDITOR apps.conf`
+* read `apps_sample.conf` for documentation on its syntax
+
+#Built-in support for Keyboard Maestro Macros
+
+Same pattern as above for sites and apps, just called "macros".
 
 #Built in commands
 * quit (also CTRL-D or just "q")
