@@ -93,6 +93,8 @@ def main(args=sys.argv):
     engine.addReloader(pyc(sites.__file__), fullReload)
     import apps
     engine.addReloader(pyc(apps.__file__), fullReload)
+    import macros
+    engine.addReloader(pyc(macros.__file__), fullReload)
     args = parseArgs(args)
     inFile = vars(args)["in"]
     commandLineCommand = " ".join(args.command)
