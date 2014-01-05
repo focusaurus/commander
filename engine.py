@@ -53,7 +53,8 @@ class Engine(object):
             def addWithAlias(function):
                 self.add(function, function.__name__)
                 if alias:
-                    self.add(function, alias)
+                    for splitAlias in alias.split(","):
+                        self.add(function, splitAlias)
                 return function
             return addWithAlias
         else:

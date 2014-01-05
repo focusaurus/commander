@@ -38,7 +38,7 @@ def command(*args, **kwargs):
 
 
 def fullReload(command=""):
-    """Restart the Commander python process, preserving arguments"""
+    """Restart the Commander python process, preserving arguments."""
     currentArgs = vars(parseArgs())
     newArgs = []
     for arg in ["in", "out"]:
