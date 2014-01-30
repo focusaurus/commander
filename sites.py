@@ -11,14 +11,15 @@ def site_opener(URLs):
     return a closure-powered site command function
 
     """
-    #Note: this function name must match the ConfHandler instance name below
-    def site(*terms):
+    #Note: this function name must be app_command
+    #based on passing "app" to the ConfHandler below
+    def site_command(*terms):
         for URL in URLs:
             if URL.count("%s") == 1:
                 helpers.search(URL, terms)
             else:
                 helpers.browser(URL)
-    return site
+    return site_command
 
 
 sites_handler = conf_handler.ConfHandler("site", site_opener)

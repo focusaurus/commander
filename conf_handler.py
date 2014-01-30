@@ -36,7 +36,7 @@ class ConfHandler:
         #Purge any existing sites
         purged = []
         for kw, func in engine.commands().iteritems():
-            if func.__name__ == self.name:
+            if func.__name__ == self.name + "_task":
                 purged.append(kw)
                 engine.remove(kw)
         logger.debug("purged ConfHandler commands: %s" % purged)

@@ -11,10 +11,11 @@ def macro_runner(macro_name):
     return a closure-powered macro command function
 
     """
-    #Note: this function name must match the ConfHandler instance name below
-    def macro(*ignore):
+    #Note: this function name must be app_command
+    #based on passing "app" to the ConfHandler below
+    def macro_command(*ignore):
         maestro(" ".join(macro_name))
-    return macro
+    return macro_command
 
 
 macro_handler = conf_handler.ConfHandler("macro", macro_runner)
