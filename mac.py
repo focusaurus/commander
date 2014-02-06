@@ -37,7 +37,9 @@ def clipboard(function):
 
     CAREFUL if combining this decorator with the @command decorator.
     @command must come FIRST in the source code (so it is executed last), and
-    the fully-decorated function is stored in the command map."""
+    the fully-decorated function is stored in the command map.
+
+"""
 
     logger.debug("clipboard called with %s", function)
 
