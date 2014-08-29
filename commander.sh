@@ -13,6 +13,7 @@
 #    on: turn on commander in one-command mode
 #        (recommended for shell integration)
 #    off: stop commander and disable commander integration
+#    repl: start up a Read/Eval/Print/Loop process
 #    fifo: start a long-running commander process connected to a fifo
 #    interpret: interpret a single command (Internal use only)
 commander() {

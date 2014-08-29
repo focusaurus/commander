@@ -55,7 +55,7 @@ def fullReload(command=""):
     sys.stderr.flush()
     logger.debug(
         "Commander reloading with args: %s %s" %
-            (sys.argv[0], " ".join(newArgs)))
+        (sys.argv[0], " ".join(newArgs)))
     if wrapped():
         os.execvp("rlwrap", ["rlwrap"] + newArgs)
     else:
@@ -64,19 +64,19 @@ def fullReload(command=""):
 
 def wrapped():
     output = subprocess.Popen(
-            ["ps", "-p", str(os.getppid()), "-o", "command"],
-            stdout=subprocess.PIPE).communicate()[0]
+        ["ps", "-p", str(os.getppid()), "-o", "command"],
+        stdout=subprocess.PIPE).communicate()[0]
     return output.count("rlwrap") > 0
 
 
 def parseArgs(args=sys.argv):
     parser = argparse.ArgumentParser(description="Command Line Bliss")
     parser.add_argument('--in', metavar='F', type=argparse.FileType("r+"),
-        default=sys.stdin, nargs="?",
-        help='file (FIFO usually) for integrating with shells')
+                        default=sys.stdin, nargs="?",
+                        help='file (FIFO usually) for integrating with shells')
     parser.add_argument('--out', metavar='F', type=argparse.FileType("w"),
-        default=sys.stdout, nargs="?",
-        help='file (FIFO usually) for integrating with shells')
+                        default=sys.stdout, nargs="?",
+                        help='file (FIFO usually) for integrating with shells')
     parser.add_argument('--repl', action='store_true',
         help='start a read-eval-print-loop interactive commander session')
     parser.add_argument("command", nargs="*")
@@ -118,4 +118,15 @@ def main(args=sys.argv):
 if __name__ == "__main__":
     main()
 
-__all__ = ["builtins", "engine", "gui", "helpers", "mac", "sites", "apps"]
+__all__ = [
+    "apps",
+    "builtins",
+    "command",
+    "engine",
+    "gui",
+    "helpers",
+    "mac",
+    "macros",
+    "main",
+    "sites"
+]
