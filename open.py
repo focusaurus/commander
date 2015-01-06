@@ -6,15 +6,21 @@ import sys
 import json
 import types
 
-MAIN = "open.json"
-LOCAL = "open_local.json"
-pretty = {
+
+def full(name):
+    return os.path.join(os.path.dirname(sys.argv[0]), name)
+
+MAIN = full("open.json")
+LOCAL = full("open_local.json")
+PRETTY = {
     "indent": 2,
     "sort_keys": True
 }
 
-def path(name):
-    return os.path.join(os.path.dirname(sys.argv[0]), name)
+# I didn't actually, y'know, test this on linux yet
+OPEN = "open"
+if os.uname()[0] == "Linux":
+    OPEN = "xdg-open"
 
 
 def load(open_path):
@@ -47,7 +53,7 @@ def opener(command):
 
     """
     def open_command(*repl_args):
-        to_run = ["open"]
+        to_run = [OPEN]
         if "app" in command:
             to_run.extend(["-a", command["app"]])
         for arg in command.get("args", []):
@@ -56,7 +62,6 @@ def opener(command):
             if arg.startswith("~"):
                 arg = helpers.expand_path(arg)
             to_run.append(arg)
-        print(to_run)  # @bug
         helpers.run(to_run)
     return open_command
 
@@ -70,12 +75,20 @@ def append(command, open_path):
             return
         commands.append(command)
         conf.seek(0)
-        json.dump(commands, conf, **pretty)
+        json.dump(commands, conf, **PRETTY)
 
 
 @engine.command(alias="open")
-@helpers.split
 def _open(*ignore):
+    prompt_and_save(MAIN)
+
+
+@engine.command()
+def open_local():
+    prompt_and_save(LOCAL)
+
+
+def prompt_and_save(path):
     """commander command function to add a new opener command by name."""
     command = {}
     names = raw_input("Task name: ").split(",")
@@ -90,7 +103,8 @@ def _open(*ignore):
     if command.get("args"):
         command["args"] = command["args"].split(" ")
     add_command(command)
-    append(command, path(MAIN))
+    append(command, path)
+
 
 for name in [MAIN, LOCAL]:
-    load(path(name))
+    load(name)

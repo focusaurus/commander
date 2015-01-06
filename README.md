@@ -146,14 +146,25 @@ Note that if shell filename globbing is sometimes screwing with your commander a
 
 commander has built-in support for opening stuff.
 
-- First, define a command with the syntax `open AppName:task arg1 arg1`
-  - For example: `open Firefox:mdn https://developer.mozilla.org` would define a task named "mdn" that would open the Mozilla Developer Network site in Firefox
-- The app name is optional, so to open URLs in the default browser or application, omit it
-  - `open so http://stackoverflow.com` will define a task named "so" to open Stack Overflow in your default browser
-- You can also just launch an application by name
-  -
+- First, define a task by running the built-in `open` task
+- You will be prompted for a required task name
+  - This can be a simple name or several aliases delimited by a comma
+  - Examples: `espn` or `sports,espn`
+- You will be prompted for an optional application name
+  - Leave this blank to just open URLs with the default application (default browser for web URLs, Preview.app for images on the filesystem, text editor for code on the filesystem, Finder for directories, etc)
+  - Example: "Google Chrome", "Textedit", "HipChat"
+- You will be prompted for arguments
+  - These are space-delimited and can be URLs or other program arguments
+  - For example: `https://forecast.io http://www.weather.com/` would open both of those URLs in a browser
+- Your data file `open.json` will be updated to hold this command
+- There is also an `open_local` command which stores data in `open_local.json`. I use this for work-related things I need to keep out of my public github dotfiles repository due to NDAs and proprietary info.
+- after the `open` command completes the new task is immediately available for use
 
 # Built-in support for opening web sites
+
+## Deprecated!
+
+As of commander 2.0 this functionality has been combined into the `open` command.
 
 Commander includes a `sites` module which gives you shortcuts to launch or search web sites from the command line. Your mapping of command trigger to URL is stored in a `sites.conf` configuration file. To set up the `sites` module:
 
@@ -171,6 +182,10 @@ To add a new site to the configuration file, use the `site` commander command, s
 Note that `sites.conf` supports aliases as the site keywords as well as multiple URLs opened in browser tabs. This is handy for projects. For example, if you have a project "zippio" and you always need your docs, development server, art repo, and github repo open in browser tabs, you can make a site called "zippio" that will open all of those pages in tabs.
 
 # Built-in support for OS X Applications
+
+## Deprecated!
+
+As of commander 2.0 this functionality has been combined into the `open` command.
 
 Similar to the `sites` module there is an `apps` module which gives you the ability to define commander commands to launch Applications on OS X. To set up the `apps` module:
 
