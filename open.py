@@ -8,7 +8,10 @@ import types
 
 MAIN = "open.json"
 LOCAL = "open_local.json"
-
+pretty = {
+    "indent": 2,
+    "sort_keys": True
+}
 
 def path(name):
     return os.path.join(os.path.dirname(sys.argv[0]), name)
@@ -67,32 +70,26 @@ def append(command, open_path):
             return
         commands.append(command)
         conf.seek(0)
-        json.dump(commands, conf)
+        json.dump(commands, conf, **pretty)
 
 
 @engine.command(alias="open")
 @helpers.split
-def _open(*args):
+def _open(*ignore):
     """commander command function to add a new opener command by name."""
-    # names = input("Task name:")
-    # app = input("Application (optional)")
-    # args = input("Arguments:")
-    first = args[0]
-    rest = args[1:]
-    print(args)
-    command = {
-        "args": rest
-    }
-    if ":" in first:
-        app, names = first.split(":", 1)
-        command["app"] = app
-    else:
-        names = first
-    names = names.split(",")
+    command = {}
+    names = raw_input("Task name: ").split(",")
+    command["app"] = raw_input("Application (optional): ")
+    command["args"] = raw_input("Arguments (optional): ")
+
     if len(names) == 1:
         command["name"] = names[0]
     else:
         command["name"] = names
+    [command.pop(key) for key, value in command.items() if value is ""]
+    if command.get("args"):
+        command["args"] = command["args"].split(" ")
+    add_command(command)
     append(command, path(MAIN))
 
 for name in [MAIN, LOCAL]:

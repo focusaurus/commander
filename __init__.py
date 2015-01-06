@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-"""Command line general purpose OS automation triggering mechanism.
-"""
+"""Command line general purpose OS automation triggering mechanism."""
 import argparse
 import functools
 import logging
@@ -11,7 +10,7 @@ import subprocess
 import sys
 
 import engine as _engine
-#Import our useful submoduls so user scripts get everything they need
+# Import our useful submoduls so user scripts get everything they need
 import helpers
 import mac
 
@@ -47,8 +46,8 @@ def fullReload(command=""):
             newArgs.extend(["--" + arg, fileName])
     if currentArgs["repl"]:
         newArgs.append("--repl")
-    #This makes sure the current command is not dropped, but
-    #passed on to the next process via command line
+    # This makes sure the current command is not dropped, but
+    # passed on to the next process via command line
     newArgs.append(command)
     newArgs.insert(0, sys.argv[0])
     sys.stdout.flush()
@@ -95,6 +94,8 @@ def main(args=sys.argv):
     engine.addReloader(pyc(apps.__file__), fullReload)
     import macros
     engine.addReloader(pyc(macros.__file__), fullReload)
+    import open
+    engine.addReloader(pyc(open.__file__), fullReload)
     args = parseArgs(args)
     inFile = vars(args)["in"]
     commandLineCommand = " ".join(args.command)
@@ -108,8 +109,8 @@ def main(args=sys.argv):
         try:
             command = inFile.readline()
             if not command:
-                #Typing CTRL-D at the prompt generates empty string,
-                #which means quit
+                # Typing CTRL-D at the prompt generates empty string,
+                # which means quit
                 sys.exit(0)
             engine.interpret(command)
         except KeyboardInterrupt:
@@ -128,5 +129,6 @@ __all__ = [
     "mac",
     "macros",
     "main",
+    "open",
     "sites"
 ]
