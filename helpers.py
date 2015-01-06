@@ -62,7 +62,8 @@ def background(*args):
 
 
 def script(script_text, interpreter="/bin/sh"):
-    subprocess.Popen(interpreter, stdin=subprocess.PIPE).communicate(script_text)
+    subprocess.Popen(interpreter, stdin=subprocess.PIPE).communicate(
+        script_text)
 
 
 def clear(command):
@@ -100,8 +101,7 @@ def split(function):
     CAREFUL if combining this decorator with the @command decorator.
     @command must come FIRST in the source code (so it is executed last), and
     the fully-decorated function is stored in the command map."""
-    logger.debug("Functon %s will get pre-split arguments" % \
-        function.__name__)
+    logger.debug("Functon %s will get pre-split arguments" % function.__name__)
 
     @functools.wraps(function)
     def wrapper(args):
@@ -119,11 +119,12 @@ def no_new_lines(function):
     CAREFUL if combining this decorator with the @command decorator.
     @command must come FIRST in the source code (so it is executed last), and
     the fully-decorated function is stored in the command map."""
-    logger.debug("Functon %s will get spaces instead of newlines" % \
-        function.__name__)
+    logger.debug("Functon %s will get spaces instead of newlines" %
+                 function.__name__)
 
     @functools.wraps(function)
     def wrapper(args):
-        logger.debug("no newlines in args to %s: %s" % (function.__name__, args))
+        logger.debug(
+            "no newlines in args to %s: %s" % (function.__name__, args))
         return function(args.replace("\n", ""))
     return wrapper

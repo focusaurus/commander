@@ -33,7 +33,7 @@ class ConfHandler:
         """Load the configuration file and activate the commands."""
         if (not self.conf_exists()):
             return
-        #Purge any existing sites
+        # Purge any existing sites
         purged = []
         for kw, func in engine.commands().iteritems():
             if func.__name__ == self.name + "_task":

@@ -11,8 +11,8 @@ def site_opener(URLs):
     return a closure-powered site command function
 
     """
-    #Note: this function name must be app_command
-    #based on passing "app" to the ConfHandler below
+    # Note: this function name must be app_command
+    # based on passing "app" to the ConfHandler below
     def site_command(*terms):
         for URL in URLs:
             if URL.count("%s") == 1:
