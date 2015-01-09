@@ -36,7 +36,14 @@ def command(*args, **kwargs):
     return engine.command(*args, **kwargs)
 
 
-def fullReload(command=""):
+def opener(file="open.json", task_name=None, pre_hook=None):
+    import open_task
+    engine.addReloader(pyc(open_task.__file__), full_reload)
+    task_name = task_name or os.path.splitext(os.path.basename(file))[0]
+    open_task.load(file, task_name, pre_hook)
+
+
+def full_reload(command=""):
     """Restart the Commander python process, preserving arguments."""
     currentArgs = vars(parseArgs())
     newArgs = []
@@ -70,32 +77,38 @@ def wrapped():
 
 def parseArgs(args=sys.argv):
     parser = argparse.ArgumentParser(description="Command Line Bliss")
-    parser.add_argument('--in', metavar='F', type=argparse.FileType("r+"),
-                        default=sys.stdin, nargs="?",
-                        help='file (FIFO usually) for integrating with shells')
-    parser.add_argument('--out', metavar='F', type=argparse.FileType("w"),
-                        default=sys.stdout, nargs="?",
-                        help='file (FIFO usually) for integrating with shells')
-    parser.add_argument('--repl', action='store_true',
+    parser.add_argument(
+        '--in',
+        metavar='F',
+        type=argparse.FileType("r+"),
+        default=sys.stdin, nargs="?",
+        help='file (FIFO usually) for integrating with shells')
+    parser.add_argument(
+        '--out',
+        metavar='F',
+        type=argparse.FileType("w"),
+        default=sys.stdout, nargs="?",
+        help='file (FIFO usually) for integrating with shells')
+    parser.add_argument(
+        '--repl',
+        action='store_true',
         help='start a read-eval-print-loop interactive commander session')
     parser.add_argument("command", nargs="*")
     return parser.parse_args()
 
 
 def main(args=sys.argv):
-    engine.addReloader(pyc(args[0]), fullReload)
-    engine.addReloader(pyc(__file__), fullReload)
-    #Load up the various submodules
+    engine.addReloader(pyc(args[0]), full_reload)
+    engine.addReloader(pyc(__file__), full_reload)
+    # Load up the various submodules
     import builtins
-    engine.addReloader(pyc(builtins.__file__), fullReload)
+    engine.addReloader(pyc(builtins.__file__), full_reload)
     import sites
-    engine.addReloader(pyc(sites.__file__), fullReload)
+    engine.addReloader(pyc(sites.__file__), full_reload)
     import apps
-    engine.addReloader(pyc(apps.__file__), fullReload)
+    engine.addReloader(pyc(apps.__file__), full_reload)
     import macros
-    engine.addReloader(pyc(macros.__file__), fullReload)
-    import open
-    engine.addReloader(pyc(open.__file__), fullReload)
+    engine.addReloader(pyc(macros.__file__), full_reload)
     args = parseArgs(args)
     inFile = vars(args)["in"]
     commandLineCommand = " ".join(args.command)
@@ -129,6 +142,6 @@ __all__ = [
     "mac",
     "macros",
     "main",
-    "open",
+    "opener",
     "sites"
 ]

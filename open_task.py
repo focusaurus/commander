@@ -10,8 +10,6 @@ import types
 def full(name):
     return os.path.join(os.path.dirname(sys.argv[0]), name)
 
-MAIN = full("open.json")
-LOCAL = full("open_local.json")
 PRETTY = {
     "indent": 2,
     "sort_keys": True
@@ -23,7 +21,7 @@ if os.uname()[0] == "Linux":
     OPEN = "xdg-open"
 
 
-def load(open_path):
+def load(open_path, task_name=None, pre_hook=None):
     if not os.path.exists(open_path):
         return
 
@@ -34,18 +32,20 @@ def load(open_path):
             sys.stderr.write("Warning: invalid JSON at {}".format(open_path))
             return
     engine.addReloader(open_path, load)
-    [add_command(command) for command in commands]
+    [add_command(command, pre_hook) for command in commands]
+    if task_name:
+        engine.add(prompt_and_save(open_path), task_name)
 
 
-def add_command(command):
-    task = opener(command)
+def add_command(command, pre_hook):
+    task = opener(command, pre_hook)
     names = command["name"]
     if type(names) in types.StringTypes:
         names = [names]
     [engine.add(task, name) for name in names]
 
 
-def opener(command):
+def opener(command, pre_hook):
     """
     Generate a closure function to open an app with arguments.
 
@@ -53,6 +53,8 @@ def opener(command):
 
     """
     def open_command(*repl_args):
+        if pre_hook:
+            pre_hook(command)
         to_run = [OPEN]
         if "app" in command:
             to_run.extend(["-a", command["app"]])
@@ -78,33 +80,21 @@ def append(command, open_path):
         json.dump(commands, conf, **PRETTY)
 
 
-@engine.command(alias="open")
-def _open(*ignore):
-    prompt_and_save(MAIN)
-
-
-@engine.command()
-def open_local():
-    prompt_and_save(LOCAL)
-
-
 def prompt_and_save(path):
-    """commander command function to add a new opener command by name."""
-    command = {}
-    names = raw_input("Task name: ").split(",")
-    command["app"] = raw_input("Application (optional): ")
-    command["args"] = raw_input("Arguments (optional): ")
+    def prompt_and_save_inner():
+        """commander command function to add a new opener command by name."""
+        command = {}
+        names = raw_input("Task name: ").split(",")
+        command["app"] = raw_input("Application (optional): ")
+        command["args"] = raw_input("Arguments (optional): ")
 
-    if len(names) == 1:
-        command["name"] = names[0]
-    else:
-        command["name"] = names
-    [command.pop(key) for key, value in command.items() if value is ""]
-    if command.get("args"):
-        command["args"] = command["args"].split(" ")
-    add_command(command)
-    append(command, path)
-
-
-for name in [MAIN, LOCAL]:
-    load(name)
+        if len(names) == 1:
+            command["name"] = names[0]
+        else:
+            command["name"] = names
+        [command.pop(key) for key, value in command.items() if value is ""]
+        if command.get("args"):
+            command["args"] = command["args"].split(" ")
+        add_command(command)
+        append(command, path)
+    return prompt_and_save
