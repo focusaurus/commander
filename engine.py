@@ -8,36 +8,36 @@ logger = logging.getLogger("commander")
 class Engine(object):
 
     def __init__(self):
-        #This is the map of command names to command functions
+        # This is the map of command names to command functions
         self._commands = {}
         self._reloaders = []
-        self._preHooks = []
-        self._postHooks = []
+        self._pre_hooks = []
+        self._post_hooks = []
 
     def commands(self):
         return self._commands.copy()
 
     def add(self, function, name):
         self._commands[name] = function
-        logger.debug("engine.add %s engine: %s %s" % \
-            (name, id(self), self._commands.keys()))
+        logger.debug("engine.add %s engine: %s %s" %
+                     (name, id(self), self._commands.keys()))
 
     def remove(self, name):
         del self._commands[name]
 
-    def addPreHook(self, hook):
-        self._preHooks.append(hook)
+    def add_pre_hook(self, hook):
+        self._pre_hooks.append(hook)
 
-    def addPostHook(self, hook):
-        self._postHooks.append(hook)
+    def add_post_hook(self, hook):
+        self._post_hooks.append(hook)
 
-    def removePreHook(self, hook):
-        self._preHooks.remove(hook)
+    def remove_pre_hook(self, hook):
+        self._pre_hooks.remove(hook)
 
-    def removePostHook(self, hook):
-        self._postHooks.remove(hook)
+    def remove_post_hook(self, hook):
+        self._post_hooks.remove(hook)
 
-    def addReloader(self, path, hook):
+    def add_reloader(self, path, hook):
         self._reloaders.append(Reloader(path, hook))
 
     def prompt(self):
@@ -50,15 +50,15 @@ class Engine(object):
         if invoked:
             #Arguments passed to the decorator: @command(alias="foo")
             #Must operate in decorator-factory mode
-            def addWithAlias(function):
+            def add_with_alias(function):
                 self.add(function, function.__name__)
                 if alias:
                     for splitAlias in alias.split(","):
                         self.add(function, splitAlias)
                 return function
-            return addWithAlias
+            return add_with_alias
         else:
-            #Decorator used directly: @command
+            # Decorator used directly: @command
             function = args[0]
             self.add(function, function.__name__)
             return function
@@ -70,11 +70,11 @@ class Engine(object):
                 reloader.hook(value)
         value = value.strip()
         if not value:
-            #Empty line, reprompt
+            # Empty line, reprompt
             return
         args = None
         if " " in value:
-            #At least one argument
+            # At least one argument
             command, args = value.split(" ", 1)
         else:
             command = value
@@ -83,22 +83,22 @@ class Engine(object):
         keys.sort()
         logger.debug("Looking for command '%s' in %s" % (command, keys))
         if command in self._commands:
-            commandFunc = self._commands.get(command)
-            [hook(commandFunc) for hook in self._preHooks]
+            command_func = self._commands.get(command)
+            [hook(command_func) for hook in self._pre_hooks]
             if args:
                 logger.debug(
-                    "Calling command function %s with args %s" % \
+                    "Calling command function %s with args %s" %
                     (command, args))
-                #Do it with args!
-                commandFunc(args)
+                # Do it with args!
+                command_func(args)
             else:
                 logger.debug("Calling command function %s" % command)
-                #Do it without args!
+                # Do it without args!
                 try:
-                    commandFunc('')
+                    command_func('')
                 except TypeError:
-                    commandFunc()
-            [hook(commandFunc) for hook in self._postHooks]
+                    command_func()
+            [hook(command_func) for hook in self._post_hooks]
         else:
             self.unknown(command)
 
@@ -120,8 +120,8 @@ class Reloader(object):
         if (not os.access(self.path, os.R_OK)) or \
                 (not os.path.isfile(self.path)):
             return False
-        newMTime = os.stat(self.path).st_mtime
-        if self.mtime < newMTime:
-            self.mtime = newMTime
+        new_mtime = os.stat(self.path).st_mtime
+        if self.mtime < new_mtime:
+            self.mtime = new_mtime
             return True
         return False

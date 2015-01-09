@@ -14,12 +14,13 @@ Commander designed to run in one of several modes:
 1. Integrated into your existing shell. Your commander functions are available directly in your shell as if they were shell functions.
 1. As a build tool similar to [Make](http://en.wikipedia.org/wiki/List_of_build_automation_software), [Rake](http://rake.rubyforge.org/), or [Shovel](https://github.com/seomoz/shovel)
 
-#What can I do with it?
+# What can I do with it?
 
 Your commander functions can do just about anything since they are written in python. Out of the box, commander provides helpers to make the following things trivial.
 
 * Opening one or more browser URLs (bookmarks)
 * quick web based searches
+* Opening applications
 * running programs and scripts
 * miscellaneous system automation
 * Integrate with [Keyboard Maestro](http://www.keyboardmaestro.com/main/) on OS X for automation that is challenging from python such as manipulating windows, simulating mouse clicks, and so on
@@ -43,12 +44,12 @@ Commander works well as a [git submodule](http://book.git-scm.com/5_submodules.h
 
 
     cd ~/dotfiles
-    git submodule add git@github.com:focusaurus/commander.git
+    git submodule add https://github.com/focusaurus/commander.git
     cp -a commander/commander_sample.py commander.py
 
 Then edit your `commander.py` script. Read the samples there to get the hang of it. Once you see how it works, feel free to delete the sample command functions defined there.
 
-#Running Commander in single-command mode
+# Running Commander in single-command mode
 
 By default, commander will start up, interpret the command given on the command line, then exit. This mode is good for:
 
@@ -91,12 +92,11 @@ Then launch your repl like this:
 
 You can now use the up arrow or CTRL-p to go back in your command history, etc.
 
-##Automatic reloading
+## Automatic reloading
 
 In repl mode, commander will watch the mtime on the code and configuration files and automatically reload itself when they change. If you add a new command to commander.py while a repl is already running, you can immediately use it in the repl. Same thing applies to `sites.conf`. You can use the `commander.engine.addReloader` function to watch additional files to trigger reloads.
 
-
-#Integrating commander into your regular shell
+# Integrating commander into your regular shell
 ## (Or: Complete Shell Nirvana)
 
 Here's the mode that will allow you to seamlessly integrate commander commands into your normal interactive [bash](http://tldp.org/LDP/abs/html/bashver4.html) or [zsh](http://www.zsh.org/). Once you get this set up, my hope is you'll take advantage of the power of python and write more and more of your sophisticated functionality as a commander function instead of a shell function. In this mode you get the best of both worlds of your shell and python.
@@ -138,11 +138,33 @@ Note that if shell filename globbing is sometimes screwing with your commander a
     noglob mycommand_that_needs_a_regex  f?art
 
 
-##More info on command_not_found_handler
+## More info on command_not_found_handler
 
 `command_not_found_handler` function is a hook that zsh or bash (bash calls it `command_not_found_handle` though) will call whenever you type in something that doesn't match a target operation (a shell builtin command, an alias, a function, a binary in your PATH, etc). Ever seen an Ubuntu box tell you something like "The program 'cowsay' is currently not installed.  The program 'cowsay can be found in the following packages...". That's the [command-not-found](http://bazaar.launchpad.net/~command-not-found-developers/command-not-found/trunk/files) package using this hook to make that happen.
 
-#Built-in support for opening web sites
+# Built-in support for opening URLs and Applications
+
+commander has built-in support for opening stuff.
+
+- First, define a task by running the built-in `open` task
+- You will be prompted for a required task name
+  - This can be a simple name or several aliases delimited by a comma
+  - Examples: `espn` or `sports,espn`
+- You will be prompted for an optional application name
+  - Leave this blank to just open URLs with the default application (default browser for web URLs, Preview.app for images on the filesystem, text editor for code on the filesystem, Finder for directories, etc)
+  - Example: "Google Chrome", "Textedit", "HipChat"
+- You will be prompted for arguments
+  - These are space-delimited and can be URLs or other program arguments
+  - For example: `https://forecast.io http://www.weather.com/` would open both of those URLs in a browser
+- Your data file `open.json` will be updated to hold this command
+- There is also an `open_local` command which stores data in `open_local.json`. I use this for work-related things I need to keep out of my public github dotfiles repository due to NDAs and proprietary info.
+- after the `open` command completes the new task is immediately available for use
+
+# Built-in support for opening web sites
+
+## Deprecated!
+
+As of commander 2.0 this functionality has been combined into the `open` command.
 
 Commander includes a `sites` module which gives you shortcuts to launch or search web sites from the command line. Your mapping of command trigger to URL is stored in a `sites.conf` configuration file. To set up the `sites` module:
 
@@ -159,7 +181,11 @@ To add a new site to the configuration file, use the `site` commander command, s
 
 Note that `sites.conf` supports aliases as the site keywords as well as multiple URLs opened in browser tabs. This is handy for projects. For example, if you have a project "zippio" and you always need your docs, development server, art repo, and github repo open in browser tabs, you can make a site called "zippio" that will open all of those pages in tabs.
 
-#Built-in support for OS X Applications
+# Built-in support for OS X Applications
+
+## Deprecated!
+
+As of commander 2.0 this functionality has been combined into the `open` command.
 
 Similar to the `sites` module there is an `apps` module which gives you the ability to define commander commands to launch Applications on OS X. To set up the `apps` module:
 
@@ -172,20 +198,20 @@ Similar to the `sites` module there is an `apps` module which gives you the abil
 
 Same pattern as above for sites and apps, just called "macros".
 
-#Built in commands
+# Built in commands
 * quit (also CTRL-D or just "q")
     * quits commander.py
 * help (also "?")
     * Print a basic help message and a list of loaded commands
 
-#Supported Environments
+# Supported Environments
 
 * Python 2.7 (probably 2.6 will also work)
 * zsh or bash (version 4 or newer)
-* OS X (10.7, 10.6, probably the rest of them)
+* OS X (10.10-10.6, probably the rest of them)
 * Linux
 
-#Using Commander over the network
+# Using Commander over the network
 
 It is pretty straightforward to use the basic unix utilities of fifos and netcat to make commander work across the network. Note this is entirely cleartext and insecure. Also, netcat will only handle one connection at a time.
 
@@ -207,7 +233,7 @@ You may also want to check out [Alfred](http://www.alfredapp.com/) or [Quicksilv
 change the code to do something else. That said, those commercial apps have
 bells and whistles out the wazoo, so if you need iCal integration graphical previews of your PDF files, have a look at them.
 
-##My Workflow
+## My Workflow
 
 I map Command-Space to a Keyboard Maestro macro that actives Terminal.app, positions the window at the top left corner, and resizes it to a small narrow strip.  In this window I keep the commander.py prompt running in the repl.  Thus to access any functionality I want from commander.py, I type Command-Space followed by the command such as "unmount", which is a little script that unmounts all my external disks so I can pack up my macbook. I can do this globally no matter where my keyboard focus is at the moment, and the UI is instantaneous.
 

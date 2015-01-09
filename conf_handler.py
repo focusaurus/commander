@@ -21,7 +21,7 @@ class ConfHandler:
             os.path.dirname(sys.argv[0]), "%ss.conf" % self.name)
         self.make_task = make_task
         if self.conf_exists():
-            engine.addReloader(self.conf_path, self.load)
+            engine.add_reloader(self.conf_path, self.load)
             self.load()
 
     def conf_exists(self):
@@ -41,8 +41,8 @@ class ConfHandler:
                 engine.remove(kw)
         logger.debug("purged ConfHandler commands: %s" % purged)
         logger.debug("ConfHandler loading %s" % self.conf_path)
-        with open(self.conf_path) as inFile:
-            for line in inFile:
+        with open(self.conf_path) as in_file:
+            for line in in_file:
                 if not line.strip():
                     continue
                 if COMMENT_RE.match(line):

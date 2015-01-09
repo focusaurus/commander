@@ -4,9 +4,9 @@ import conf_handler
 from commander import engine
 
 
-def site_opener(URLs):
+def site_opener(urls):
     """
-    Generate a closure function to open a list of URLs in the browser.
+    Generate a closure function to open a list of urls in the browser.
 
     return a closure-powered site command function
 
@@ -14,11 +14,11 @@ def site_opener(URLs):
     # Note: this function name must be app_command
     # based on passing "app" to the ConfHandler below
     def site_command(*terms):
-        for URL in URLs:
-            if URL.count("%s") == 1:
-                helpers.search(URL, terms)
+        for url in urls:
+            if url.count("%s") == 1:
+                helpers.search(url, terms)
             else:
-                helpers.browser(URL)
+                helpers.browser(url)
     return site_command
 
 
