@@ -39,26 +39,26 @@ def add_protocol(URL):
     return "http://" + URL
 
 
-def _prepareArgs(args):
-    toRun = []
+def _prepare_args(args):
+    to_run = []
     for arg in args:
         if type(arg) in types.StringTypes:
-            toRun.extend(shlex.split(arg))
+            to_run.extend(shlex.split(arg))
         else:
-            toRun.extend(arg)
-    return toRun
+            to_run.extend(arg)
+    return to_run
 
 
 def run(*args):
-    toRun = _prepareArgs(args)
-    logger.debug("run: %s" % toRun)
-    subprocess.call(toRun)
+    to_run = _prepare_args(args)
+    logger.debug("run: %s" % to_run)
+    subprocess.call(to_run)
 
 
 def background(*args):
-    toRun = _prepareArgs(args)
-    logger.debug("background: %s" % toRun)
-    subprocess.Popen(toRun)
+    to_run = _prepare_args(args)
+    logger.debug("background: %s" % to_run)
+    subprocess.Popen(to_run)
 
 
 def script(script_text, interpreter="/bin/sh"):
