@@ -48,8 +48,8 @@ class Engine(object):
         alias = kwargs.get("alias")
         invoked = bool(not args or kwargs)
         if invoked:
-            #Arguments passed to the decorator: @command(alias="foo")
-            #Must operate in decorator-factory mode
+            # Arguments passed to the decorator: @command(alias="foo")
+            # Must operate in decorator-factory mode
             def add_with_alias(function):
                 self.add(function, function.__name__)
                 if alias:

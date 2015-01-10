@@ -1,6 +1,6 @@
 """Manage commander commands to open URLs and Apps"""
 import helpers
-from commander import engine
+from commander import engine, full_reload
 import os
 import sys
 import json
@@ -31,7 +31,7 @@ def load(open_path, task_name=None, pre_hook=None):
         except ValueError:
             sys.stderr.write("Warning: invalid JSON at {}".format(open_path))
             return
-    engine.add_reloader(open_path, load)
+    engine.add_reloader(open_path, full_reload)
     [add_command(command, pre_hook) for command in commands]
     if task_name:
         engine.add(prompt_and_save(open_path), task_name)
