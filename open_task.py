@@ -95,6 +95,6 @@ def prompt_and_save(path):
         [command.pop(key) for key, value in command.items() if value is ""]
         if command.get("args"):
             command["args"] = command["args"].split(" ")
-        add_command(command)
+        add_command(command, path)
         append(command, path)
-    return prompt_and_save
+    return prompt_and_save_inner
