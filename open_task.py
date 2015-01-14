@@ -1,4 +1,5 @@
 """Manage commander commands to open URLs and Apps"""
+import copy
 import helpers
 from commander import engine, full_reload
 import os
@@ -45,7 +46,7 @@ def add_command(command, pre_hook):
     [engine.add(task, name) for name in names]
 
 
-def opener(command, pre_hook):
+def opener(_command, pre_hook):
     """
     Generate a closure function to open an app with arguments.
 
@@ -53,6 +54,7 @@ def opener(command, pre_hook):
 
     """
     def open_command(*repl_args):
+        command = copy.copy(_command)
         if pre_hook:
             pre_hook(command)
         to_run = [OPEN]
