@@ -1,7 +1,7 @@
 """Manage commander commands to open URLs and Apps"""
 import copy
 import helpers
-from commander import engine, full_reload
+from commander import engine, full_reload, mac
 import os
 import sys
 import json
@@ -56,13 +56,20 @@ def opener(_command, pre_hook):
     def open_command(*repl_args):
         command = copy.copy(_command)
         if pre_hook:
+            # might want to pass repl_args to the pre_hook
             pre_hook(command)
         to_run = [OPEN]
         if "app" in command:
             to_run.extend(["-a", command["app"]])
-        for arg in command.get("args", []):
+        repl_args = [arg for arg in repl_args if arg]
+        args = command.get("args", [])
+        for arg in args:
             if arg.count("%s") == 1:
-                arg = arg % helpers.quote(repl_args)
+                print("arg is", arg, "repl_args", repl_args)
+                if len(repl_args) == 1:
+                    arg = arg % helpers.quote(repl_args)
+                else:
+                    arg = arg % helpers.quote(mac.pbpaste())
             if arg.startswith("~"):
                 arg = helpers.expand_path(arg)
             to_run.append(arg)

@@ -44,13 +44,13 @@ def clipboard(function):
     logger.debug("clipboard called with %s", function)
 
     @functools.wraps(function)
-    def wrapper(args):
+    def wrapper(args, **kwargs):
         logger.debug("clipboard.wrapper called with %s", args)
         if type(args) in types.StringTypes and not args:
             args = pbpaste()
         elif not args[0]:
             args = pbpaste()
-        result = function(args)
+        result = function(args, **kwargs)
         if result:
             pbcopy(str(result))
         return result
