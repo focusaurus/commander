@@ -65,7 +65,6 @@ def opener(_command, pre_hook):
         args = command.get("args", [])
         for arg in args:
             if arg.count("%s") == 1:
-                print("arg is", arg, "repl_args", repl_args)
                 if len(repl_args) == 1:
                     arg = arg % helpers.quote(repl_args)
                 else:
