@@ -59,8 +59,9 @@ def opener(_command, pre_hook):
             # might want to pass repl_args to the pre_hook
             pre_hook(command)
         to_run = [OPEN]
-        if "app" in command:
-            to_run.extend(["-a", command["app"]])
+        app = command.get("app")
+        if app:
+            to_run.extend(["-a", app])
         repl_args = [arg for arg in repl_args if arg]
         args = command.get("args", [])
         for arg in args:

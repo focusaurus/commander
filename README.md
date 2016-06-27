@@ -157,7 +157,7 @@ commander has built-in support for opening stuff.
   - These are space-delimited and can be URLs or other program arguments
   - For example: `https://forecast.io http://www.weather.com/` would open both of those URLs in a browser
 - Your data file `open.json` will be updated to hold this command
-- There is also an `open_local` command which stores data in `open_local.json`. I use this for work-related things I need to keep out of my public github dotfiles repository due to NDAs and proprietary info.
+- There is also an `open_local` command which stores data in `open-local.json`. I use this for work-related things I need to keep out of my public github dotfiles repository due to NDAs and proprietary info.
 - after the `open` command completes the new task is immediately available for use
 
 # Built-in support for opening web sites
