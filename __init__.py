@@ -74,7 +74,7 @@ def wrapped():
     output = subprocess.Popen(
         ["ps", "-p", str(os.getppid()), "-o", "command"],
         stdout=subprocess.PIPE).communicate()[0]
-    return output.count("rlwrap") > 0
+    return output.count(b"rlwrap") > 0
 
 
 def parse_args(args=sys.argv):
@@ -121,6 +121,7 @@ def main(args=sys.argv):
     while True:
         if in_file.isatty():
             args.out.write(engine.prompt())
+            args.out.flush()
         try:
             command = in_file.readline()
             if not command:
