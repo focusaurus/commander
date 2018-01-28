@@ -1,4 +1,5 @@
-from helpers import run
+from __future__ import absolute_import
+from .helpers import run
 import logging
 import subprocess
 import functools
@@ -46,7 +47,7 @@ def clipboard(function):
     @functools.wraps(function)
     def wrapper(args, **kwargs):
         logger.debug("clipboard.wrapper called with %s", args)
-        if type(args) in types.StringTypes and not args:
+        if type(args) in (str,) and not args:
             args = pbpaste()
         elif not args[0]:
             args = pbpaste()

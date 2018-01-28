@@ -1,6 +1,7 @@
 """Manage commander commands to open web sites by name."""
-import helpers
-import conf_handler
+from __future__ import absolute_import
+from . import helpers
+from . import conf_handler
 from commander import engine
 
 

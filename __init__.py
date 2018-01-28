@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 """Command line general purpose OS automation triggering mechanism."""
+from __future__ import absolute_import
 import argparse
 import functools
 import logging
@@ -9,10 +10,10 @@ import re
 import subprocess
 import sys
 
-import engine as _engine
+from . import engine as _engine
 # Import our useful submoduls so user scripts get everything they need
-import helpers
-import mac
+from . import helpers
+from . import mac
 
 logger = logging.getLogger("commander")
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
@@ -37,7 +38,7 @@ def command(*args, **kwargs):
 
 
 def opener(file="open.json", task_name=None, pre_hook=None):
-    import open_task
+    from . import open_task
     engine.add_reloader(pyc(open_task.__file__), full_reload)
     task_name = task_name or os.path.splitext(os.path.basename(file))[0]
     open_task.load(file, task_name, pre_hook)
@@ -101,13 +102,13 @@ def main(args=sys.argv):
     engine.add_reloader(pyc(args[0]), full_reload)
     engine.add_reloader(pyc(__file__), full_reload)
     # Load up the various submodules
-    import builtins
+    from . import builtins
     engine.add_reloader(pyc(builtins.__file__), full_reload)
-    import sites
+    from . import sites
     engine.add_reloader(pyc(sites.__file__), full_reload)
-    import apps
+    from . import apps
     engine.add_reloader(pyc(apps.__file__), full_reload)
-    import macros
+    from . import macros
     engine.add_reloader(pyc(macros.__file__), full_reload)
     args = parse_args(args)
     in_file = vars(args)["in"]

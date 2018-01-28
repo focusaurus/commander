@@ -1,3 +1,4 @@
+from __future__ import print_function
 import fnmatch
 import glob
 import functools
@@ -42,7 +43,7 @@ def add_protocol(URL):
 def _prepare_args(args):
     to_run = []
     for arg in args:
-        if type(arg) in types.StringTypes:
+        if type(arg) in (str,):
             to_run.extend(shlex.split(arg))
         else:
             to_run.extend(arg)
@@ -84,7 +85,7 @@ def search(url, terms):
 
 
 def quote(terms):
-    if type(terms) in types.StringTypes:
+    if type(terms) in (str,):
         terms = [terms.strip()]
     else:
         terms = [term.strip() for term in terms]

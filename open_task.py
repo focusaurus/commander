@@ -1,6 +1,7 @@
 """Manage commander commands to open URLs and Apps"""
+from __future__ import absolute_import
 import copy
-import helpers
+from . import helpers
 from commander import engine, full_reload, mac
 import os
 import sys
@@ -41,7 +42,7 @@ def load(open_path, task_name=None, pre_hook=None):
 def add_command(command, pre_hook):
     task = opener(command, pre_hook)
     names = command["name"]
-    if type(names) in types.StringTypes:
+    if type(names) in (str,):
         names = [names]
     [engine.add(task, name) for name in names]
 

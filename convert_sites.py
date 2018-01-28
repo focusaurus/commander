@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import json
 commands = []
 with open("sites.conf") as sites:

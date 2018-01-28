@@ -1,5 +1,6 @@
 """Manage commander commands to run Keyboard Maestro macros by name."""
-import conf_handler
+from __future__ import absolute_import
+from . import conf_handler
 from commander import engine
 from commander.mac import maestro
 
