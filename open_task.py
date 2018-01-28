@@ -1,5 +1,8 @@
 """Manage commander commands to open URLs and Apps"""
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
+from builtins import input
 import copy
 from . import helpers
 from commander import engine, full_reload, mac
@@ -94,15 +97,15 @@ def prompt_and_save(path):
     def prompt_and_save_inner():
         """commander command function to add a new opener command by name."""
         command = {}
-        names = raw_input("Task name: ").split(",")
-        command["app"] = raw_input("Application (optional): ")
-        command["args"] = raw_input("Arguments (optional): ")
+        names = input("Task name: ").split(",")
+        command["app"] = input("Application (optional): ")
+        command["args"] = input("Arguments (optional): ")
 
         if len(names) == 1:
             command["name"] = names[0]
         else:
             command["name"] = names
-        [command.pop(key) for key, value in command.items() if value is ""]
+        [command.pop(key) for key, value in list(command.items()) if value is ""]
         if command.get("args"):
             command["args"] = command["args"].split(" ")
         add_command(command, path)

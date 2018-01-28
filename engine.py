@@ -1,3 +1,4 @@
+from builtins import object
 import logging
 import os
 import sys
@@ -20,7 +21,7 @@ class Engine(object):
     def add(self, function, name):
         self._commands[name] = function
         logger.debug("engine.add %s engine: %s %s" %
-                     (name, id(self), self._commands.keys()))
+                     (name, id(self), list(self._commands.keys())))
 
     def remove(self, name):
         del self._commands[name]
@@ -79,7 +80,7 @@ class Engine(object):
         else:
             command = value
         command = command.lower()
-        keys = self._commands.keys()
+        keys = list(self._commands.keys())
         keys.sort()
         logger.debug("Looking for command '%s' in %s" % (command, keys))
         if command in self._commands:

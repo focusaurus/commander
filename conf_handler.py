@@ -1,4 +1,5 @@
 """Base class for plain text configuration file driven commander commands."""
+from builtins import object
 import logging
 import os
 import re
@@ -11,7 +12,7 @@ COMMENT_RE = re.compile("^\s*#")
 logger = logging.getLogger("commander")
 
 
-class ConfHandler:
+class ConfHandler(object):
 
     """Base class mapping a text configuration file to macro functions."""
 
@@ -35,7 +36,7 @@ class ConfHandler:
             return
         # Purge any existing sites
         purged = []
-        for kw, func in engine.commands().iteritems():
+        for kw, func in engine.commands().items():
             if func.__name__ == self.name + "_task":
                 purged.append(kw)
                 engine.remove(kw)

@@ -1,4 +1,6 @@
-from Tkinter import *
+from future import standard_library
+standard_library.install_aliases()
+from tkinter import *
 from commander import engine
 
 

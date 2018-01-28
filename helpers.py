@@ -1,4 +1,6 @@
 from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
 import fnmatch
 import glob
 import functools
@@ -7,7 +9,7 @@ import os
 import shlex
 import subprocess
 import types
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import webbrowser
 
 logger = logging.getLogger("commander")
@@ -89,7 +91,7 @@ def quote(terms):
         terms = [terms.strip()]
     else:
         terms = [term.strip() for term in terms]
-    return urllib2.quote(" ".join(terms))
+    return urllib.parse.quote(" ".join(terms))
 
 
 def split(function):

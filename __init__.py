@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """Command line general purpose OS automation triggering mechanism."""
 from __future__ import absolute_import
+from builtins import str
 import argparse
 import functools
 import logging

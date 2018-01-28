@@ -1,5 +1,7 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from future import standard_library
+standard_library.install_aliases()
 import sys
 from commander import engine
 from .helpers import noclear
@@ -9,7 +11,7 @@ from .helpers import noclear
 @noclear
 def help():
     commands = engine.commands()
-    keys = commands.keys()
+    keys = list(commands.keys())
     keys.sort()
     print('Commander. CTRL-D or "quit" to quit. Available commands: ')
     for key in keys:

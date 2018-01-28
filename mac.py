@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from builtins import str
 from .helpers import run
 import logging
 import subprocess
