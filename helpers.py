@@ -87,9 +87,11 @@ def search(url, terms):
 
 
 def quote(terms):
-    if type(terms) in (str,):
+    if type(terms) == bytes:
+        terms = terms.decode("utf8")
+    if type(terms) == str:
         terms = [terms.strip()]
-    else:
+    if type(terms) in (list, tuple):
         terms = [term.strip() for term in terms]
     return urllib.parse.quote(" ".join(terms))
 
