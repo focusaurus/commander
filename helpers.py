@@ -111,7 +111,7 @@ def split(function):
     @functools.wraps(function)
     def wrapper(args):
         logger.debug("Splitting args to %s: %s" % (function.__name__, args))
-        return function(*shlex.split(args))
+        return function(*shlex.split(args.decode("utf8")))
     return wrapper
 
 
