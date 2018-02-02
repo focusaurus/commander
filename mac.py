@@ -11,6 +11,8 @@ logger = logging.getLogger("commander")
 
 def pbcopy(text):
     """Put a string on the OS clipboard via pbcopy."""
+    if type(text) != bytes:
+        text = text.encode("utf8")
     subprocess.Popen("pbcopy", stdin=subprocess.PIPE).communicate(text)
 
 
