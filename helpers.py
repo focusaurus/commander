@@ -15,6 +15,11 @@ import webbrowser
 logger = logging.getLogger("commander")
 
 
+def to_str(input):
+    if type(input) == bytes:
+        return input.decode()
+    return input
+
 def browser(*args):
     [webbrowser.open_new_tab(add_protocol(arg)) for arg in args]
 
@@ -87,8 +92,7 @@ def search(url, terms):
 
 
 def quote(terms):
-    if type(terms) == bytes:
-        terms = terms.decode("utf8")
+    terms = to_str(terms)
     if type(terms) == str:
         terms = [terms.strip()]
     if type(terms) in (list, tuple):
@@ -110,8 +114,9 @@ def split(function):
 
     @functools.wraps(function)
     def wrapper(args):
+        args = to_str(args)
         logger.debug("Splitting args to %s: %s" % (function.__name__, args))
-        return function(*shlex.split(args.decode("utf8")))
+        return function(*shlex.split(args))
     return wrapper
 
 
