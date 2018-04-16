@@ -1,4 +1,3 @@
-from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
 import fnmatch
@@ -15,6 +14,8 @@ import webbrowser
 logger = logging.getLogger("commander")
 
 
+OS_IS_LINUX = os.uname().sysname == "Linux"
+OS_IS_MAC = os.uname().sysname == "Darwin"
 def to_str(input):
     if type(input) == bytes:
         return input.decode()
@@ -137,4 +138,56 @@ def no_new_lines(function):
         logger.debug(
             "no newlines in args to %s: %s" % (function.__name__, args))
         return function(args.replace("\n", ""))
+    return wrapper
+
+
+def copy(text):
+    """Put a string on the OS clipboard."""
+    if type(text) != bytes:
+        text = text.encode("utf8")
+    command = ["pbcopy"]
+    if os.uname().sysname == "Linux":
+        command = ["xsel", "-b"]
+    subprocess.Popen(command, stdin=subprocess.PIPE).communicate(text)
+
+
+def paste():
+    """Return a string from the OS clipboard."""
+    command = ["pbpaste"]
+    if os.uname().sysname == "Linux":
+        command = ["xclip", "-selection", "clipboard", "-o"]
+    return subprocess.Popen(command, shell=False,
+                            stdout=subprocess.PIPE).stdout.read().strip()
+
+
+def clipboard(function):
+    """
+    Create a decorated function taking arguments from the system clipboard.
+
+    This will wrap your command function such that the if the user did not
+    provide any command line arguments, the contents of the OS clipboard will
+    be used instead.
+
+    If the wrapped function returns something, the return value will be
+    copied to the clipboard.
+
+    CAREFUL if combining this decorator with the @command decorator.
+    @command must come FIRST in the source code (so it is executed last), and
+    the fully-decorated function is stored in the command map.
+
+"""
+
+    logger.debug("clipboard called with %s", function)
+
+    @functools.wraps(function)
+    def wrapper(args, **kwargs):
+        logger.debug("clipboard.wrapper called with %s", args)
+        if type(args) in (str,bytes) and not args:
+            args = paste()
+        elif not args[0]:
+            args = paste()
+        result = function(args, **kwargs)
+        if result:
+            copy(str(result))
+        return result
     return wrapper
