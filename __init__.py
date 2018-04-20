@@ -46,27 +46,17 @@ def opener(file="open.json", task_name=None, pre_hook=None):
 
 def full_reload(command=""):
     """Restart the Commander python process, preserving arguments."""
-    current_args = vars(parse_args())
-    new_args = []
-    for arg in ["in", "out"]:
-        fileName = current_args[arg].name
-        if fileName and fileName != "<std%s>" % arg:
-            new_args.extend(["--" + arg, fileName])
-    if current_args["repl"]:
-        new_args.append("--repl")
+    args = [sys.executable]
+    args.extend(sys.argv)
     # This makes sure the current command is not dropped, but
     # passed on to the next process via command line
-    new_args.append(command)
-    new_args.insert(0, sys.argv[0])
+    args.append(command)
     sys.stdout.flush()
     sys.stderr.flush()
-    logger.debug(
-        "Commander reloading with args: %s %s" %
-        (sys.argv[0], " ".join(new_args)))
     if wrapped():
-        os.execvp("rlwrap", ["rlwrap"] + new_args)
-    else:
-        os.execvp(sys.argv[0], new_args)
+        args.insert(0, "rlwrap")
+    logger.debug("Commander reloading with args: %s" % (" ".join(args)))
+    os.execvp(args[0], new_args[1:])
 
 
 def wrapped():
