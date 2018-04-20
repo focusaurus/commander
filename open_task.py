@@ -19,9 +19,8 @@ PRETTY = {
     "sort_keys": True
 }
 
-# I didn't actually, y'know, test this on linux yet
 OPEN = "open"
-if os.uname()[0] == "Linux":
+if os.uname().sysname == "Linux":
     OPEN = "xdg-open"
 
 
@@ -64,7 +63,10 @@ def opener(_command, pre_hook):
         to_run = [OPEN]
         app = command.get("app")
         if app:
-            to_run.extend(["-a", app])
+            if os.uname().sysname == "Linux":
+                to_run = [app.lower()]
+            else:
+                to_run.extend(["-a", app])
         repl_args = [arg for arg in repl_args if arg]
         args = command.get("args", [])
         for arg in args:
