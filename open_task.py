@@ -74,11 +74,11 @@ def opener(_command, pre_hook):
                 if len(repl_args) == 1:
                     arg = arg % helpers.quote(repl_args)
                 else:
-                    arg = arg % helpers.quote(mac.pbpaste())
+                    arg = arg % helpers.quote(helpers.paste())
             if arg.startswith("~"):
                 arg = helpers.expand_path(arg)
             to_run.append(arg)
-        helpers.run(to_run)
+        helpers.background(to_run)
     return open_command
 
 

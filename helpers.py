@@ -67,7 +67,7 @@ def run(*args):
 def background(*args):
     to_run = _prepare_args(args)
     logger.debug("background: %s" % to_run)
-    subprocess.Popen(to_run)
+    subprocess.Popen(to_run, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
 
 
 def script(script_text, interpreter="/bin/sh"):
