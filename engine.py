@@ -20,8 +20,8 @@ class Engine(object):
 
     def add(self, function, name):
         self._commands[name] = function
-        logger.debug("engine.add %s engine: %s %s" %
-                     (name, id(self), list(self._commands.keys())))
+        logger.debug("engine.add %s engine: %s" %
+                     (name, id(self)))
 
     def remove(self, name):
         del self._commands[name]
