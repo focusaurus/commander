@@ -19,6 +19,7 @@ def site_opener(urls):
                 helpers.search(url, terms)
             else:
                 helpers.browser(url)
+
     return site_command
 
 

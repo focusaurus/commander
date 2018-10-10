@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 from . import engine as _engine
+
 # Import our useful submoduls so user scripts get everything they need
 from . import helpers
 from . import mac
@@ -18,8 +19,8 @@ from . import mac
 logger = logging.getLogger("commander")
 formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 file_handler = logging.handlers.RotatingFileHandler(
-    os.path.expanduser("~/.commander.log"),
-    maxBytes=1024 ** 2, backupCount=5)
+    os.path.expanduser("~/.commander.log"), maxBytes=1024 ** 2, backupCount=5
+)
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 logger.addHandler(logging.StreamHandler())
@@ -39,6 +40,7 @@ def command(*args, **kwargs):
 
 def opener(file="open.json", task_name=None, pre_hook=None):
     from . import open_task
+
     engine.add_reloader(pyc(open_task.__file__), full_reload)
     task_name = task_name or os.path.splitext(os.path.basename(file))[0]
     open_task.load(file, task_name, pre_hook)
@@ -46,7 +48,7 @@ def opener(file="open.json", task_name=None, pre_hook=None):
 
 def full_reload(command=""):
     current_args = vars(parse_args())
-    new_args = [sys.executable, sys.argv[0]] # ["path/to/python3", "commander.py"]
+    new_args = [sys.executable, sys.argv[0]]  # ["path/to/python3", "commander.py"]
     for arg in ["in", "out"]:
         fileName = current_args[arg].name
         if fileName and fileName != "<std%s>" % arg:
@@ -60,37 +62,40 @@ def full_reload(command=""):
         new_args.insert(0, "rlwrap")
     sys.stdout.flush()
     sys.stderr.flush()
-    logger.info(
-        "Commander reloading with execvp: '%s'" %
-        (" ".join(new_args)))
+    logger.info("Commander reloading with execvp: '%s'" % (" ".join(new_args)))
     os.execvp(new_args[0], new_args)
 
 
 def wrapped():
     output = subprocess.Popen(
-        ["ps", "-p", str(os.getppid()), "-o", "command"],
-        stdout=subprocess.PIPE).communicate()[0]
+        ["ps", "-p", str(os.getppid()), "-o", "command"], stdout=subprocess.PIPE
+    ).communicate()[0]
     return output.count(b"rlwrap") > 0
 
 
 def parse_args(args=sys.argv):
     parser = argparse.ArgumentParser(description="Command Line Bliss")
     parser.add_argument(
-        '--in',
-        metavar='F',
+        "--in",
+        metavar="F",
         type=argparse.FileType("r+"),
-        default=sys.stdin, nargs="?",
-        help='file (FIFO usually) for integrating with shells')
+        default=sys.stdin,
+        nargs="?",
+        help="file (FIFO usually) for integrating with shells",
+    )
     parser.add_argument(
-        '--out',
-        metavar='F',
+        "--out",
+        metavar="F",
         type=argparse.FileType("w"),
-        default=sys.stdout, nargs="?",
-        help='file (FIFO usually) for integrating with shells')
+        default=sys.stdout,
+        nargs="?",
+        help="file (FIFO usually) for integrating with shells",
+    )
     parser.add_argument(
-        '--repl',
-        action='store_true',
-        help='start a read-eval-print-loop interactive commander session')
+        "--repl",
+        action="store_true",
+        help="start a read-eval-print-loop interactive commander session",
+    )
     parser.add_argument("command", nargs="*")
     return parser.parse_args()
 
@@ -100,12 +105,16 @@ def main(args=sys.argv):
     engine.add_reloader(pyc(__file__), full_reload)
     # Load up the various submodules
     from . import builtins
+
     engine.add_reloader(pyc(builtins.__file__), full_reload)
     from . import sites
+
     engine.add_reloader(pyc(sites.__file__), full_reload)
     from . import apps
+
     engine.add_reloader(pyc(apps.__file__), full_reload)
     from . import macros
+
     engine.add_reloader(pyc(macros.__file__), full_reload)
     args = parse_args(args)
     in_file = vars(args)["in"]
@@ -128,6 +137,7 @@ def main(args=sys.argv):
         except KeyboardInterrupt:
             sys.exit(0)
 
+
 if __name__ == "__main__":
     main()
 
@@ -142,5 +152,5 @@ __all__ = [
     "macros",
     "main",
     "opener",
-    "sites"
+    "sites",
 ]

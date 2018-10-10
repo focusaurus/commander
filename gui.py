@@ -1,4 +1,5 @@
 from future import standard_library
+
 standard_library.install_aliases()
 from tkinter import *
 from commander import engine
@@ -7,8 +8,7 @@ from commander import engine
 class Application(Frame):
     def create_widgets(self):
         self.input = StringVar()
-        self.prompt = Entry(self, width=100, takefocus=True,
-                            textvariable=self.input)
+        self.prompt = Entry(self, width=100, takefocus=True, textvariable=self.input)
         self.prompt.bind("<Return>", self.run)
         self.prompt.pack({"anchor": "n"})
         self.prompt.focus_set()

@@ -1,5 +1,6 @@
 """Manage commander commands to open URLs and Apps"""
 from future import standard_library
+
 standard_library.install_aliases()
 from builtins import input
 import copy
@@ -14,10 +15,8 @@ import types
 def full(name):
     return os.path.join(os.path.dirname(sys.argv[0]), name)
 
-PRETTY = {
-    "indent": 2,
-    "sort_keys": True
-}
+
+PRETTY = {"indent": 2, "sort_keys": True}
 
 OPEN = "open"
 if os.uname().sysname == "Linux":
@@ -55,6 +54,7 @@ def opener(_command, pre_hook):
     return a closure-powered opener command function
 
     """
+
     def open_command(*repl_args):
         command = copy.copy(_command)
         if pre_hook:
@@ -79,6 +79,7 @@ def opener(_command, pre_hook):
                 arg = helpers.expand_path(arg)
             to_run.append(arg)
         helpers.background(to_run)
+
     return open_command
 
 
@@ -111,4 +112,5 @@ def prompt_and_save(path):
             command["args"] = command["args"].split(" ")
         add_command(command, path)
         append(command, path)
+
     return prompt_and_save_inner

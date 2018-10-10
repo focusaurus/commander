@@ -15,6 +15,7 @@ def macro_runner(macro_name):
     # based on passing "app" to the ConfHandler below
     def macro_command(*ignore):
         maestro(" ".join(macro_name))
+
     return macro_command
 
 

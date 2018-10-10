@@ -2,6 +2,7 @@
 import os
 
 import commander
+
 # Import the @command decorator
 from commander import command
 
@@ -50,6 +51,7 @@ def te():
 @command
 def calc():
     run("open -a Calculator")
+
 
 # --- END SAFE TO EDIT/DELETE SECTION --- #
 

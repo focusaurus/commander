@@ -7,7 +7,6 @@ logger = logging.getLogger("commander")
 
 
 class Engine(object):
-
     def __init__(self):
         # This is the map of command names to command functions
         self._commands = {}
@@ -20,8 +19,7 @@ class Engine(object):
 
     def add(self, function, name):
         self._commands[name] = function
-        logger.debug("engine.add %s engine: %s" %
-                     (name, id(self)))
+        logger.debug("engine.add %s engine: %s" % (name, id(self)))
 
     def remove(self, name):
         del self._commands[name]
@@ -57,6 +55,7 @@ class Engine(object):
                     for splitAlias in alias.split(","):
                         self.add(function, splitAlias)
                 return function
+
             return add_with_alias
         else:
             # Decorator used directly: @command
@@ -88,15 +87,15 @@ class Engine(object):
             [hook(command_func) for hook in self._pre_hooks]
             if args:
                 logger.debug(
-                    "Calling command function %s with args %s" %
-                    (command, args))
+                    "Calling command function %s with args %s" % (command, args)
+                )
                 # Do it with args!
                 command_func(args)
             else:
                 logger.debug("Calling command function %s" % command)
                 # Do it without args!
                 try:
-                    command_func('')
+                    command_func("")
                 except TypeError:
                     command_func()
             [hook(command_func) for hook in self._post_hooks]
@@ -118,8 +117,7 @@ class Reloader(object):
         self.hook = hook
 
     def check(self, *args):
-        if (not os.access(self.path, os.R_OK)) or \
-                (not os.path.isfile(self.path)):
+        if (not os.access(self.path, os.R_OK)) or (not os.path.isfile(self.path)):
             return False
         new_mtime = os.stat(self.path).st_mtime
         if self.mtime < new_mtime:

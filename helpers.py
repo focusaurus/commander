@@ -1,4 +1,5 @@
 from future import standard_library
+
 standard_library.install_aliases()
 import fnmatch
 import glob
@@ -16,10 +17,13 @@ logger = logging.getLogger("commander")
 
 OS_IS_LINUX = os.uname().sysname == "Linux"
 OS_IS_MAC = os.uname().sysname == "Darwin"
+
+
 def to_str(input):
     if type(input) == bytes:
         return input.decode()
     return input
+
 
 def browser(*args):
     [webbrowser.open_new_tab(add_protocol(arg)) for arg in args]
@@ -67,12 +71,16 @@ def run(*args):
 def background(*args):
     to_run = _prepare_args(args)
     logger.debug("background: %s" % to_run)
-    subprocess.Popen(to_run, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+    subprocess.Popen(
+        to_run,
+        stderr=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stdin=subprocess.DEVNULL,
+    )
 
 
 def script(script_text, interpreter="/bin/sh"):
-    subprocess.Popen(interpreter, stdin=subprocess.PIPE).communicate(
-        script_text)
+    subprocess.Popen(interpreter, stdin=subprocess.PIPE).communicate(script_text)
 
 
 def clear(command):
@@ -118,6 +126,7 @@ def split(function):
         args = to_str(args)
         logger.debug("Splitting args to %s: %s" % (function.__name__, args))
         return function(*shlex.split(args))
+
     return wrapper
 
 
@@ -130,14 +139,13 @@ def no_new_lines(function):
     CAREFUL if combining this decorator with the @command decorator.
     @command must come FIRST in the source code (so it is executed last), and
     the fully-decorated function is stored in the command map."""
-    logger.debug("Functon %s will get spaces instead of newlines" %
-                 function.__name__)
+    logger.debug("Functon %s will get spaces instead of newlines" % function.__name__)
 
     @functools.wraps(function)
     def wrapper(args):
-        logger.debug(
-            "no newlines in args to %s: %s" % (function.__name__, args))
+        logger.debug("no newlines in args to %s: %s" % (function.__name__, args))
         return function(args.replace("\n", ""))
+
     return wrapper
 
 
@@ -156,8 +164,11 @@ def paste():
     command = ["pbpaste"]
     if os.uname().sysname == "Linux":
         command = ["xclip", "-selection", "clipboard", "-o"]
-    return subprocess.Popen(command, shell=False,
-                            stdout=subprocess.PIPE).stdout.read().strip()
+    return (
+        subprocess.Popen(command, shell=False, stdout=subprocess.PIPE)
+        .stdout.read()
+        .strip()
+    )
 
 
 def clipboard(function):
@@ -182,7 +193,7 @@ def clipboard(function):
     @functools.wraps(function)
     def wrapper(args, **kwargs):
         logger.debug("clipboard.wrapper called with %s", args)
-        if type(args) in (str,bytes) and not args:
+        if type(args) in (str, bytes) and not args:
             args = paste()
         elif not args[0]:
             args = paste()
@@ -190,4 +201,5 @@ def clipboard(function):
         if result:
             copy(str(result))
         return result
+
     return wrapper

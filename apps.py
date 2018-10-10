@@ -11,14 +11,15 @@ def app_opener(app_name):
     return a closure-powered app command function
 
     """
-    #Note: this function name must be app_command
-    #based on passing "app" to the ConfHandler below
+    # Note: this function name must be app_command
+    # based on passing "app" to the ConfHandler below
     def app_command(*args):
         run_args = ["open", "-a"]
         run_args.append(" ".join(app_name))
         run_args.extend(args)
         run_args = [arg for arg in run_args if arg]
         helpers.run(run_args)
+
     return app_command
 
 
